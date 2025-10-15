@@ -1,0 +1,42 @@
+{
+  "name": "@lynx-js/react-use",
+  "version": "0.0.1",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rslib build",
+    "check": "biome check --write",
+    "dev": "rslib build --watch",
+    "format": "biome format --write",
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.2.4",
+    "@lynx-js/types": "3.4.11",
+    "@microsoft/api-extractor": "^7.52.15",
+    "@rslib/core": "^0.13.3",
+    "@rstest/core": "^0.4.1",
+    "@types/node": "^24.6.1",
+    "@types/react": "^18.3.25",
+    "dprint": "^0.50.2",
+    "jsdom": "^27.0.0",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
+  },
+  "dependencies": {
+    "@lynx-js/react": "^0.114.1",
+    "react-use": "^17.6.0"
+  },
+  "packageManager": "pnpm@10.17.0+sha512.fce8a3dd29a4ed2ec566fb53efbb04d8c44a0f05bc6f24a73046910fb9c3ce7afa35a0980500668fa3573345bd644644fa98338fa168235c80f4aa17aa17fbef"
+}

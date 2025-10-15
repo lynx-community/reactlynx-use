@@ -1,0 +1,11 @@
+[
+  {
+    "type": "section-header",
+    "label": "Guide"
+  },
+  "index",
+  {
+    "type": "section-header",
+    "label": "Core Functions"
+  }
+]

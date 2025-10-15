@@ -1,0 +1,19 @@
+[
+  {
+    "type": "dir",
+    "name": "MTS",
+    "label": "MTS",
+    "collapsible": true,
+    "collapsed": false
+  },
+  {
+    "type": "divider"
+  },
+  {
+    "type": "dir",
+    "name": "state",
+    "label": "State",
+    "collapsible": true,
+    "collapsed": false
+  }
+]
