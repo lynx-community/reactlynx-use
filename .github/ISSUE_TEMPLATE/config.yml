@@ -1,0 +1,9 @@
+---
+contact_links:
+  - about: "For ReactLynx framework support, please raise issues in the lynx-stack repository."
+    name: ReactLynx
+    url: "https://github.com/lynx-family/lynx-stack"
+  - about: "For Lynx SDK support, please raise issues in the lynx repository."
+    name: Lynx SDK
+    url: "https://github.com/lynx-family/lynx"
+
