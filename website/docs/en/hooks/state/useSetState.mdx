@@ -7,8 +7,9 @@ Re-export from [react-use](https://github.com/streamich/react-use)
 :::
 
 ## Usage
+
 ```tsx
-import { useSetState } from '@lynx-js/react-use';
+import { useSetState } from "@lynx-js/react-use";
 
 const Demo = () => {
   const [state, setState] = useSetState({});
@@ -16,13 +17,13 @@ const Demo = () => {
   return (
     <view>
       <view>{JSON.stringify(state, null, 2)}</view>
-      <view bindtap={() => setState({hello: 'world'})}>hello</view>
-      <view bindtap={() => setState({foo: 'bar'})}>foo</view>
-      <view 
+      <view bindtap={() => setState({ hello: "world" })}>hello</view>
+      <view bindtap={() => setState({ foo: "bar" })}>foo</view>
+      <view
         bindtap={() => {
           setState((prevState) => ({
             count: (prevState.count || 0) + 1,
-          }))
+          }));
         }}
       >
         count
@@ -32,10 +33,10 @@ const Demo = () => {
 };
 ```
 
-
 ## Type Declarations
+
 ```ts
-declare function useSetState<T extends object>(
+function useSetState<T extends object>(
   initialState?: T
 ): [
   state: T,
