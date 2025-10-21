@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.4",
+    "@changesets/cli": "^2.29.7",
     "@lynx-js/types": "3.4.11",
     "@microsoft/api-extractor": "^7.53.1",
     "@rslib/core": "^0.13.3",
