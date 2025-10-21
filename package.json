@@ -19,7 +19,8 @@
     "check": "biome check --write",
     "dev": "rslib build --watch",
     "format": "biome format --write",
-    "test": "vitest"
+    "test": "vitest",
+    "release": "pnpm run build && pnpm changeset publish"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.4",
