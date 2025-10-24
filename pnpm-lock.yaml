@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@lynx-js/react':
-        specifier: ^0.114.2
-        version: 0.114.2(@lynx-js/types@3.4.11)(@types/react@18.3.26)
       react-use:
         specifier: ^17.6.0
         version: 17.6.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -21,6 +18,9 @@ importers:
       '@changesets/cli':
         specifier: ^2.29.7
         version: 2.29.7(@types/node@24.9.1)
+      '@lynx-js/react':
+        specifier: ^0.114.2
+        version: 0.114.2(@lynx-js/types@3.4.11)(@types/react@18.3.26)
       '@lynx-js/types':
         specifier: 3.4.11
         version: 3.4.11
