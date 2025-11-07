@@ -18,6 +18,17 @@ We also draw inspiration from other amazing projects in the community:
 - [vueuse/vueuse](https://github.com/vueuse/vueuse)
 - [alibaba/hooks](https://github.com/alibaba/hooks)
 
+## Docs
+
+- [**Lifecycles**](./docs/en/lifecycle/index.md)
+  - [`useEffectOnce`](./docs/en/lifecycle/useEffectOnce.md) &mdash; a modified [`useEffect`](https://reactjs.org/docs/hooks-reference.html#useeffect) hook that only runs once.
+  - [`useLifecycles`](./docs/en/lifecycle/useLifecycles.md) &mdash; calls `mount` and `unmount` callbacks.
+  - [`useMountedState`](./docs/en/lifecycle/useMountedState.md) and [`useUnmountPromise`](./docs/en/lifecycle/useUnmountPromise.md) &mdash; track if component is mounted.
+  - [`useUnmount`](./docs/en/lifecycle/useUnmount.md) &mdash; calls `unmount` callbacks.
+  - [`useUpdateEffect`](./docs/en/lifecycle/useUpdateEffect.md) &mdash; run an `effect` only on updates.
+  
+
+
 ## ⚠️ Development Status
 
 **This library is currently in early development stage and is NOT production ready.**

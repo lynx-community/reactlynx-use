@@ -1,0 +1,45 @@
+# useUpdateEffect
+
+React effect hook that ignores the first invocation (e.g. on mount). The signature is exactly the same as the `useEffect` hook.
+
+> **Credit:** Re-export from [react-use](https://github.com/streamich/react-use)
+
+## Usage
+
+```tsx
+import { useEffect } from "@lynx-js/react";
+import { useUpdateEffect } from "@lynx-js/react-use";
+
+const Demo = () => {
+  const [count, setCount] = React.useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCount((count) => count + 1);
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+
+  useUpdateEffect(() => {
+    console.log("count", count); // will only show 1 and beyond
+
+    return () => {
+      // *OPTIONAL*
+      // do something on unmount
+    };
+  }); // you can include deps array if necessary
+
+  return <view>Count: {count}</view>;
+};
+```
+
+## Type Declarations
+
+```ts
+import type { useEffect } from "@lynx-js/react";
+
+declare const useUpdateEffect: typeof useEffect;
+```
