@@ -20,12 +20,12 @@ We also draw inspiration from other amazing projects in the community:
 
 ## Docs
 
-- [**Lifecycles**](./docs/en/lifecycle/index.md)
-  - [`useEffectOnce`](./docs/en/lifecycle/useEffectOnce.md) &mdash; a modified [`useEffect`](https://reactjs.org/docs/hooks-reference.html#useeffect) hook that only runs once.
-  - [`useLifecycles`](./docs/en/lifecycle/useLifecycles.md) &mdash; calls `mount` and `unmount` callbacks.
-  - [`useMountedState`](./docs/en/lifecycle/useMountedState.md) and [`useUnmountPromise`](./docs/en/lifecycle/useUnmountPromise.md) &mdash; track if component is mounted.
-  - [`useUnmount`](./docs/en/lifecycle/useUnmount.md) &mdash; calls `unmount` callbacks.
-  - [`useUpdateEffect`](./docs/en/lifecycle/useUpdateEffect.md) &mdash; run an `effect` only on updates.
+- [**Lifecycles**](./docs/en/lifecycles/index.md)
+  - [`useEffectOnce`](./docs/en/lifecycles/useEffectOnce.md) &mdash; a modified [`useEffect`](https://reactjs.org/docs/hooks-reference.html#useeffect) hook that only runs once.
+  - [`useLifecycles`](./docs/en/lifecycles/useLifecycles.md) &mdash; calls `mount` and `unmount` callbacks.
+  - [`useMountedState`](./docs/en/lifecycles/useMountedState.md) and [`useUnmountPromise`](./docs/en/lifecycles/useUnmountPromise.md) &mdash; track if component is mounted.
+  - [`useUnmount`](./docs/en/lifecycles/useUnmount.md) &mdash; calls `unmount` callbacks.
+  - [`useUpdateEffect`](./docs/en/lifecycles/useUpdateEffect.md) &mdash; run an `effect` only on updates.
   
 
 
