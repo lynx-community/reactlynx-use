@@ -1,8 +1,8 @@
 # useUnmount
 
-React lifecycle hook that calls a function when the component will unmount. Use `useLifecycles` if you need both a mount and unmount function.
-
 > **Credit:** Re-export from [react-use](https://github.com/streamich/react-use)
+
+React lifecycle hook that calls a function when the component will unmount. Use `useLifecycles` if you need both a mount and unmount function.
 
 ## Usage
 

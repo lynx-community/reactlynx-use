@@ -1,8 +1,8 @@
 # useUpdateEffect
 
-React effect hook that ignores the first invocation (e.g. on mount). The signature is exactly the same as the `useEffect` hook.
-
 > **Credit:** Re-export from [react-use](https://github.com/streamich/react-use)
+
+React effect hook that ignores the first invocation (e.g. on mount). The signature is exactly the same as the `useEffect` hook.
 
 ## Usage
 

@@ -1,8 +1,8 @@
 # useThrottleFn
 
-React hooks that throttle.
-
 > **Credit:** Re-export from [react-use](https://github.com/streamich/react-use)
+
+React hooks that throttle.
 
 ## Usage
 

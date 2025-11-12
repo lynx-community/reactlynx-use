@@ -1,8 +1,8 @@
 # useSetState
 
-React state hook that creates `setState` method which works similar to how `this.setState` works in class components—it merges object changes into current state.
-
 > **Credit:** Re-export from [react-use](https://github.com/streamich/react-use)
+
+React state hook that creates `setState` method which works similar to how `this.setState` works in class components—it merges object changes into current state.
 
 ## Usage
 

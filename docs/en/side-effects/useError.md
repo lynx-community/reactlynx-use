@@ -1,8 +1,8 @@
 # useError
 
-React side-effect hook that returns an error dispatcher.
-
 > **Credit:** Re-export from [react-use](https://github.com/streamich/react-use)
+
+React side-effect hook that returns an error dispatcher.
 
 ## Usage
 

@@ -1,8 +1,8 @@
 # useSet
 
-React state hook that tracks a [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set).
-
 > **Credit:** Re-export from [react-use](https://github.com/streamich/react-use)
+
+React state hook that tracks a [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set).
 
 ## Usage
 

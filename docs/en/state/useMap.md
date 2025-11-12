@@ -1,8 +1,8 @@
 # useMap
 
-React state hook that tracks a value of an object.
-
 > **Credit:** Re-export from [react-use](https://github.com/streamich/react-use)
+
+React state hook that tracks a value of an object.
 
 ## Usage
 

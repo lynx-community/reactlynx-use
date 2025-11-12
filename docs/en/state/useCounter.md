@@ -1,8 +1,8 @@
 # useCounter
 
-React state hook that tracks a numeric value.
-
 > **Credit:** Re-export from [react-use](https://github.com/streamich/react-use)
+
+React state hook that tracks a numeric value.
 
 ## Usage
 

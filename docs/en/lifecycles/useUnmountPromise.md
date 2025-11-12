@@ -1,5 +1,7 @@
 # useUnmountPromise
 
+> **Credit:** Re-export from [react-use](https://github.com/streamich/react-use)
+
 A life-cycle hook that provides a higher order promise that does not resolve if component un-mounts.
 
 ## Usage

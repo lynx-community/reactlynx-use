@@ -1,8 +1,8 @@
 # useToggle
 
-React state hook that tracks value of a boolean.
-
 > **Credit:** Re-export from [react-use](https://github.com/streamich/react-use)
+
+React state hook that tracks value of a boolean.
 
 ## Usage
 

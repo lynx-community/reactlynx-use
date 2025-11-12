@@ -1,8 +1,8 @@
 # useQueue
 
-React state hook implements simple FIFO queue.
-
 > **Credit:** Re-export from [react-use](https://github.com/streamich/react-use)
+
+React state hook implements simple FIFO queue.
 
 ## Usage
 

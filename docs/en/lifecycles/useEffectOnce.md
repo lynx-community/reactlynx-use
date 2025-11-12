@@ -1,8 +1,8 @@
 # useEffectOnce
 
-React lifecycle hook that runs an effect only once.
-
 > **Credit:** Re-export from [react-use](https://github.com/streamich/react-use)
+
+React lifecycle hook that runs an effect only once.
 
 ## Usage
 

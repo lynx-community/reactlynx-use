@@ -1,8 +1,8 @@
 # useDefault
 
-React state hook that returns the default value when state is `null` or `undefined`.
-
 > **Credit:** Re-export from [react-use](https://github.com/streamich/react-use)
+
+React state hook that returns the default value when state is `null` or `undefined`.
 
 ## Usage
 

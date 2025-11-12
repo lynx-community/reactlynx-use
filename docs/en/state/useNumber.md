@@ -1,10 +1,10 @@
 # useNumber
 
+> **Credit:** Re-export from [react-use](https://github.com/streamich/react-use)
+
 React state hook that tracks a numeric value.
 
 `useNumber` is an alias for `useCounter`.
-
-> **Credit:** Re-export from [react-use](https://github.com/streamich/react-use)
 
 ## Usage
 

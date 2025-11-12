@@ -1,8 +1,8 @@
 # createMemo
 
-Hook factory, receives a function to be memoized, returns a memoized React hook, which receives the same arguments and returns the same result as the original function.
-
 > **Credit:** Re-export from [react-use](https://github.com/streamich/react-use)
+
+Hook factory, receives a function to be memoized, returns a memoized React hook, which receives the same arguments and returns the same result as the original function.
 
 ## Usage
 
