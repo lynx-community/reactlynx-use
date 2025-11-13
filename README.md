@@ -20,36 +20,34 @@ We also draw inspiration from other amazing projects in the community:
 
 ## Docs
 
-- [**Lifecycles**](./docs/en/lifecycles/index.md)
+- [**MainThreadScripts**](./docs/en/mts/README.md)
+  - [`useMainThreadImperativeHandle`](./docs/en/mts/useMainThreadImperativeHandle.md)
+  - [`useTapLock`](./docs/en/mts/useTapLock.md)
+- [**Lifecycles**](./docs/en/lifecycles/README.md)
   - [`useEffectOnce`](./docs/en/lifecycles/useEffectOnce.md) &mdash; a modified [`useEffect`](https://reactjs.org/docs/hooks-reference.html#useeffect) hook that only runs once.
   - [`useLifecycles`](./docs/en/lifecycles/useLifecycles.md) &mdash; calls `mount` and `unmount` callbacks.
   - [`useMountedState`](./docs/en/lifecycles/useMountedState.md) and [`useUnmountPromise`](./docs/en/lifecycles/useUnmountPromise.md) &mdash; track if component is mounted.
   - [`useUnmount`](./docs/en/lifecycles/useUnmount.md) &mdash; calls `unmount` callbacks.
   - [`useUpdateEffect`](./docs/en/lifecycles/useUpdateEffect.md) &mdash; run an `effect` only on updates.
-  
-
+- [**SideEffects**](./docs/en/side-effects/README.md)
+  - [`useDebounce`](./docs/en/side-effects/useDebounce.md) &mdash; debounces a function.
+  - [`useError`](./docs/en/side-effects/useError.md) &mdash; error dispatcher. 
+  - [`useThrottle` and `useThrottleFn`](./docs/en/side-effects/useThrottle.md) &mdash; throttles a function.
+- [**State**](./docs/en/state/README.md)
+  - [`createMemo`](./docs/en/state/createMemo.md) &mdash; factory of memoized hooks.
+  - [`useToggle` and `useBoolean`](./docs/en/state/useToggle.md) &mdash; tracks state of a boolean.
+  - [`useCounter` and `useNumber`](./docs/en/state/useCounter.md) &mdash; tracks state of a number. 
+  - [`useDefault`](./docs/en/state/useDefault.md) &mdash; returns the default value when state is `null` or `undefined`.
+  - [`useLatest`](./docs/en/state/useLatest.md) &mdash; returns the latest state or props
+  - [`useMap`](./docs/en/state/useMap.md) &mdash; tracks state of an object.
+  - [`usePrevious`](./docs/en/state/usePrevious.md) &mdash; returns the previous state or props. 
+  - [`useQueue`](./docs/en/state/useQueue.md) &mdash; implements simple queue.
+  - [`useSet`](./docs/en/state/useSet.md) &mdash; tracks state of a Set.
+  - [`useSetState`](./docs/en/state/useSetState.md) &mdash; creates `setState` method which works like `this.setState`.
 
 ## ⚠️ Development Status
 
 **This library is currently in early development stage and is NOT production ready.**
-
-## 📋 TODOs
-
-### Lynx Cross-Platform Specific Hooks
-
-- [x] **`useEventListener`**
-- [x] **`useTapLock`**
-- [ ] **`useTapAway`**
-- [ ] **`useIntersection`**
-- [ ] **`useInput`**
-- [ ] **`useEvent`**
-
-## 🚧 Coming Soon
-
-- 📚 Comprehensive documentation
-- 🧪 Unit tests and examples
-- 📱 Platform-specific optimizations
-- 🔄 Stable API design
 
 ## 🤝 Contributing
 
