@@ -8,31 +8,24 @@ A React-style hooks library designed specifically for [ReactLynx](https://lynxjs
 - ⚛️ **React-Style API**: Familiar hooks interface for React developers
 - 🔧 **Cross-Platform**: Built with Lynx's unique cross-platform capabilities in mind
 
-## 🙏 Thanks
-
-Many hooks in this library are built upon the excellent foundation provided by [react-use](https://github.com/streamich/react-use). We extend our gratitude to the maintainers and contributors of react-use for their outstanding work in the React hooks ecosystem.
-
-We also draw inspiration from other amazing projects in the community:
-
-- [kripod/react-hooks](https://github.com/kripod/react-hooks)
-- [vueuse/vueuse](https://github.com/vueuse/vueuse)
-- [alibaba/hooks](https://github.com/alibaba/hooks)
-
 ## Docs
 
 - [**MainThreadScripts**](./docs/en/mts/README.md)
-  - [`useMainThreadImperativeHandle`](./docs/en/mts/useMainThreadImperativeHandle.md)
-  - [`useTapLock`](./docs/en/mts/useTapLock.md)
+  - [`useMainThreadImperativeHandle`](./docs/en/mts/useMainThreadImperativeHandle.md) &mdash; main-thread version of React's [useImperativeHandle](https://react.dev/reference/react/useImperativeHandle).
+  - [`useTapLock`](./docs/en/mts/useTapLock.md) &mdash; a hook for locking tap events.
+
 - [**Lifecycles**](./docs/en/lifecycles/README.md)
   - [`useEffectOnce`](./docs/en/lifecycles/useEffectOnce.md) &mdash; a modified [`useEffect`](https://reactjs.org/docs/hooks-reference.html#useeffect) hook that only runs once.
   - [`useLifecycles`](./docs/en/lifecycles/useLifecycles.md) &mdash; calls `mount` and `unmount` callbacks.
   - [`useMountedState`](./docs/en/lifecycles/useMountedState.md) and [`useUnmountPromise`](./docs/en/lifecycles/useUnmountPromise.md) &mdash; track if component is mounted.
   - [`useUnmount`](./docs/en/lifecycles/useUnmount.md) &mdash; calls `unmount` callbacks.
   - [`useUpdateEffect`](./docs/en/lifecycles/useUpdateEffect.md) &mdash; run an `effect` only on updates.
+
 - [**SideEffects**](./docs/en/side-effects/README.md)
   - [`useDebounce`](./docs/en/side-effects/useDebounce.md) &mdash; debounces a function.
   - [`useError`](./docs/en/side-effects/useError.md) &mdash; error dispatcher. 
   - [`useThrottle` and `useThrottleFn`](./docs/en/side-effects/useThrottle.md) &mdash; throttles a function.
+
 - [**State**](./docs/en/state/README.md)
   - [`createMemo`](./docs/en/state/createMemo.md) &mdash; factory of memoized hooks.
   - [`useToggle` and `useBoolean`](./docs/en/state/useToggle.md) &mdash; tracks state of a boolean.
@@ -45,9 +38,15 @@ We also draw inspiration from other amazing projects in the community:
   - [`useSet`](./docs/en/state/useSet.md) &mdash; tracks state of a Set.
   - [`useSetState`](./docs/en/state/useSetState.md) &mdash; creates `setState` method which works like `this.setState`.
 
-## ⚠️ Development Status
+## 🙏 Thanks
 
-**This library is currently in early development stage and is NOT production ready.**
+Many hooks in this library are built upon the excellent foundation provided by [react-use](https://github.com/streamich/react-use). We extend our gratitude to the maintainers and contributors of react-use for their outstanding work in the React hooks ecosystem.
+
+We also draw inspiration from other amazing projects in the community:
+
+- [kripod/react-hooks](https://github.com/kripod/react-hooks)
+- [vueuse/vueuse](https://github.com/vueuse/vueuse)
+- [alibaba/hooks](https://github.com/alibaba/hooks)
 
 ## 🤝 Contributing
 
