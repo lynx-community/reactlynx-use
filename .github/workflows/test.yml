@@ -1,24 +1,47 @@
 name: Test
 
-# Controls when the action will run.
 on:
-  # Triggers the workflow on pull request events but only for the main branch
   pull_request:
     branches: [main]
   push:
     branches: [main]
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
+  code-style-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup Pnpm
+        run: npm install -g corepack@latest && corepack enable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "pnpm"
+
+      - name: Install Dependencies
+        run: pnpm install
+
+      - name: Code Style Check
+        run: pnpm biome check
+
+      - name: Changeset Check
+        run: pnpm changeset status --since=origin/main
+
   test:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -35,5 +58,5 @@ jobs:
       - name: Install Dependencies
         run: pnpm install
 
-      - name: Run Test
-        run: pnpm run test
+      - name: Run Tests
+        run: pnpm test
