@@ -23,7 +23,7 @@ export { default as useTimeoutFn } from './useTimeoutFn.js';
 export type {
   Direction,
   UseVelocityOptions,
-  VelocityResult,
   UseVelocityReturn,
+  VelocityResult,
 } from './useVelocity.js';
 export { default as useVelocity } from './useVelocity.js';

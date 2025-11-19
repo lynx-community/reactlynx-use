@@ -1,6 +1,6 @@
 import { runOnMainThread } from '@lynx-js/react';
 import { fireEvent, render } from '@lynx-js/react/testing-library';
-import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import useVelocity, { type VelocityResult } from '../src/useVelocity';
 
 describe('useVelocity', () => {
