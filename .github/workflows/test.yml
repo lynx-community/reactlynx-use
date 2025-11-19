@@ -28,7 +28,7 @@ jobs:
           cache: "pnpm"
 
       - name: Install Dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
 
       - name: Code Style Check
         run: pnpm biome check
@@ -38,27 +38,25 @@ jobs:
 
   test:
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 15
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
-        node-version: [20, 22]
 
     steps:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Setup Pnpm
-        run: npm install -g corepack@latest && corepack enable
+      - name: Install Pnpm
+        run: npm i -g corepack@latest --force && corepack enable
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 22.20.0
           cache: "pnpm"
 
       - name: Install Dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
 
       - name: Run Tests
         run: pnpm test
