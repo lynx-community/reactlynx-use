@@ -20,3 +20,10 @@ export type { UseTimeoutReturn } from './useTimeout.js';
 export { default as useTimeout } from './useTimeout.js';
 export type { UseTimeoutFnReturn } from './useTimeoutFn.js';
 export { default as useTimeoutFn } from './useTimeoutFn.js';
+export type {
+  Direction,
+  UseVelocityOptions,
+  VelocityResult,
+  UseVelocityReturn,
+} from './useVelocity.js';
+export { default as useVelocity } from './useVelocity.js';
