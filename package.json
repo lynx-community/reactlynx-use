@@ -25,7 +25,13 @@
     "dev": "rslib build --watch",
     "format": "biome format --write",
     "test": "vitest",
-    "release": "pnpm run build && pnpm changeset publish"
+    "release": "pnpm run build && pnpm changeset publish",
+    "prepare": "husky"
+  },
+    "lint-staged": {
+    "*.{js,jsx,ts,tsx,json,css}": [
+      "pnpm biome check"
+    ]
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.4",
@@ -38,7 +44,9 @@
     "@types/node": "^24.10.0",
     "@types/react": "^18.3.26",
     "dprint": "^0.50.2",
+    "husky": "^9.1.7",
     "jsdom": "^27.1.0",
+    "lint-staged": "^16.2.6",
     "typescript": "^5.9.3",
     "vitest": "^3.2.4"
   },
