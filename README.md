@@ -25,7 +25,7 @@
     <br />
     A React-style hooks library designed specifically for <a href="https://lynxjs.org/react/">ReactLynx</a>.
     <br />
-    Bringing familiar React patterns to cross-platform applications.
+    Translations: <a href="https://github.com/lynx-community/reactlynx-use/blob/main/README.zh-CN.md">🇨🇳 汉语</a>
   </sup>
   <br />
   <br />
@@ -62,6 +62,7 @@
 - [**MainThreadScripts**](./docs/en/mts/README.md)
   - [`useMainThreadImperativeHandle`](./docs/en/mts/useMainThreadImperativeHandle.md) &mdash; main-thread version of React's [useImperativeHandle](https://react.dev/reference/react/useImperativeHandle).
   - [`useTapLock`](./docs/en/mts/useTapLock.md) &mdash; a hook for locking tap events.
+  - [`useVelocity`](./docs/en/mts/useVelocity.md) &mdash; a hook that tracks touch velocity and direction with smoothing support.
     <br/>
     <br/>
 - [**Lifecycles**](./docs/en/lifecycles/README.md)
