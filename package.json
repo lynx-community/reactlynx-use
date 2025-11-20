@@ -1,7 +1,7 @@
 {
   "name": "@lynx-js/react-use",
   "description": "A React-style hooks library designed specifically for ReactLynx",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "repository": {
     "type": "git",
@@ -28,7 +28,7 @@
     "release": "pnpm run build && pnpm changeset publish",
     "prepare": "husky"
   },
-    "lint-staged": {
+  "lint-staged": {
     "*.{js,jsx,ts,tsx,json,css}": [
       "pnpm biome check"
     ]
