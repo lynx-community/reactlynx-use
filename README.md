@@ -74,7 +74,7 @@
   - [`useUpdateEffect`](./docs/en/lifecycles/useUpdateEffect.md) &mdash; run an `effect` only on updates.
     <br/>
     <br/>
-- [**Side-effects**](./docs/en/side-effects/README.md)
+- [**SideEffects**](./docs/en/side-effects/README.md)
   - [`useDebounce`](./docs/en/side-effects/useDebounce.md) &mdash; debounces a function.
   - [`useError`](./docs/en/side-effects/useError.md) &mdash; error dispatcher.
   - [`useThrottle` and `useThrottleFn`](./docs/en/side-effects/useThrottle.md) &mdash; throttles a function.
