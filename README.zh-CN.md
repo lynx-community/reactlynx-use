@@ -67,6 +67,7 @@
     <br/>
 - [**生命周期**](./docs/zh/lifecycles/README.md)
   - [`useEffectOnce`](./docs/zh/lifecycles/useEffectOnce.md) &mdash; 仅运行一次的 [`useEffect`](https://reactjs.org/docs/hooks-reference.html#useeffect)。
+  - [`useEventListener`](./docs/en/lifecycles/useEventListener.md) &mdash; 用于尽早添加全局事件监听器的 Hook。
   - [`useLifecycles`](./docs/zh/lifecycles/useLifecycles.md) &mdash; 调用 `mount` 和 `unmount` 回调。
   - [`useMountedState`](./docs/zh/lifecycles/useMountedState.md) 和 [`useUnmountPromise`](./docs/zh/lifecycles/useUnmountPromise.md) &mdash; 跟踪组件是否已挂载。
   - [`useUnmount`](./docs/zh/lifecycles/useUnmount.md) &mdash; 调用 `unmount` 回调。

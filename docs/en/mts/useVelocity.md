@@ -16,9 +16,10 @@ const Demo = () => {
 
   return (
     <view
-      onTouchStart={handleTouchStartMT}
-      onTouchMove={handleTouchMoveMT}
-      onTouchEnd={() => {
+      main-thread:bindtouchstart={handleTouchStartMT}
+      main-thread:bindtouchmovee={handleTouchMoveMT}
+      main-thread:bindtouchend={() => {
+        "main thread";
         const { velocity, direction } = getVelocity();
         console.log(`Velocity: ${velocity}px/s, Direction: ${direction}`);
       }}
