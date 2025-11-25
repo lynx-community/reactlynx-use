@@ -24,6 +24,7 @@ export function useStayTime<
   );
 
   const [stayTimeMs, setStayTimeMs] = useState(0);
+  const [isRunning, setIsRunning] = useState(false);
   const manualEnabledRef = useRef(true);
   const runningRef = useRef(false);
 
@@ -56,6 +57,7 @@ export function useStayTime<
   const startRunning = useCallback(() => {
     if (runningRef.current) return;
     runningRef.current = true;
+    setIsRunning(true);
     const now = Date.now();
     startTsRef.current = now;
     cancelRaf();
@@ -72,6 +74,7 @@ export function useStayTime<
     }
     startTsRef.current = null;
     runningRef.current = false;
+    setIsRunning(false);
     cancelRaf();
     const live = accumMsRef.current;
     setStayTimeMs(live);
@@ -123,7 +126,7 @@ export function useStayTime<
 
   return {
     stayTimeMs,
-    isRunning: runningRef.current,
+    isRunning,
     exposureProps: retExposureProps,
     pause,
     resume,

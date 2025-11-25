@@ -49,8 +49,8 @@ export function useExposureForNode<
     };
   }, [effectiveAdmissionMs]);
 
-  const handleAppear = useCallback((e: UIAppearanceTargetDetail) => {
-    gateRef.current.appear(e, {
+  const handleAppear = useCallback((detail: UIAppearanceTargetDetail) => {
+    gateRef.current.appear(detail, {
       onAdmit: (ev) => {
         setIsInView(true);
         onAppearRef.current?.(ev);
@@ -59,8 +59,8 @@ export function useExposureForNode<
     });
   }, []);
 
-  const handleDisappear = useCallback((e: UIAppearanceTargetDetail) => {
-    gateRef.current.disappear(e, {
+  const handleDisappear = useCallback((detail: UIAppearanceTargetDetail) => {
+    gateRef.current.disappear(detail, {
       onLeave: (ev) => {
         setIsInView(false);
         onDisappearRef.current?.(ev);

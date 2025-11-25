@@ -22,8 +22,12 @@ import {
   useUnmountPromise as _useUnmountPromise,
   useUpdateEffect as _useUpdateEffect,
 } from 'react-use';
-
 import { backgroundOnlyFactory as factory } from './backgroundOnlyFactory';
+import {
+  useExposureForNode as _useExposureForNode,
+  useExposureForPage as _useExposureForPage,
+  useStayTime as _useStayTime,
+} from './exposureBased';
 
 export const createMemo = factory(_createMemo);
 export const useBoolean = factory(_useBoolean);
@@ -47,3 +51,6 @@ export const useToggle = factory(_useToggle);
 export const useUnmount = factory(_useUnmount);
 export const useUnmountPromise = factory(_useUnmountPromise);
 export const useUpdateEffect = factory(_useUpdateEffect);
+export const useExposureForNode = factory(_useExposureForNode);
+export const useExposureForPage = factory(_useExposureForPage);
+export const useStayTime = factory(_useStayTime);
