@@ -65,9 +65,13 @@
   - [`useVelocity`](./docs/zh/mts/useVelocity.md) &mdash; 用于跟踪 tap 速度和方向的 hook。
     <br/>
     <br/>
+- [**事件**](./docs/zh/events/README.md)
+  - [`useEventListener`](./docs/zh/events/useEventListener.md) &mdash; 用于尽早添加全局事件监听器的 hook。
+  - [`useExposureForNode`](./docs/zh/events/useExposureForNode.md) &mdash; 节点级曝光 hook，可选曝光准入等待。
+  - [`useExposureForPage`](./docs/zh/events/useExposureForPage.md) &mdash; 页面级曝光 hook，监听 `GlobalEventEmitter` 的曝光/反曝光事件并支持准入等待。
+  - [`useStayTime`](./docs/zh/events/useStayTime.md) &mdash; 用于统计元素可见时长的 hook，支持手动控制。
 - [**生命周期**](./docs/zh/lifecycles/README.md)
   - [`useEffectOnce`](./docs/zh/lifecycles/useEffectOnce.md) &mdash; 仅运行一次的 [`useEffect`](https://reactjs.org/docs/hooks-reference.html#useeffect)。
-  - [`useEventListener`](./docs/en/lifecycles/useEventListener.md) &mdash; 用于尽早添加全局事件监听器的 Hook。
   - [`useLifecycles`](./docs/zh/lifecycles/useLifecycles.md) &mdash; 调用 `mount` 和 `unmount` 回调。
   - [`useMountedState`](./docs/zh/lifecycles/useMountedState.md) 和 [`useUnmountPromise`](./docs/zh/lifecycles/useUnmountPromise.md) &mdash; 跟踪组件是否已挂载。
   - [`useUnmount`](./docs/zh/lifecycles/useUnmount.md) &mdash; 调用 `unmount` 回调。

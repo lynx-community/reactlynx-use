@@ -65,9 +65,15 @@
   - [`useVelocity`](./docs/en/mts/useVelocity.md) &mdash; a hook that tracks touch velocity and direction with smoothing support.
     <br/>
     <br/>
+- [**Events**](./docs/en/events/README.md)
+  - [`useEventListener`](./docs/en/events/useEventListener.md) &mdash; a hook that helps you add a global event listener as early as possible.
+  - [`useExposureForNode`](./docs/en/events/useExposureForNode.md) &mdash; Node-level exposure hook with optional admission gating.
+  - [`useExposureForPage`](./docs/en/events/useExposureForPage.md) &mdash; Page-level exposure hook that consumes `GlobalEventEmitter` events and manages multiple items with admission gating.
+  - [`useStayTime`](./docs/en/events/useStayTime.md) &mdash; Track how long an element stays visible, with optional manual control.
+    <br/>
+    <br/>
 - [**Lifecycles**](./docs/en/lifecycles/README.md)
   - [`useEffectOnce`](./docs/en/lifecycles/useEffectOnce.md) &mdash; a modified [`useEffect`](https://reactjs.org/docs/hooks-reference.html#useeffect) hook that only runs once.
-  - [`useEventListener`](./docs/en/lifecycles/useEventListener.md) &mdash; a hook that helps you add a global event listener as early as possible.
   - [`useLifecycles`](./docs/en/lifecycles/useLifecycles.md) &mdash; calls `mount` and `unmount` callbacks.
   - [`useMountedState`](./docs/en/lifecycles/useMountedState.md) and [`useUnmountPromise`](./docs/en/lifecycles/useUnmountPromise.md) &mdash; track if component is mounted.
   - [`useUnmount`](./docs/en/lifecycles/useUnmount.md) &mdash; calls `unmount` callbacks.
