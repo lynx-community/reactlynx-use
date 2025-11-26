@@ -1,5 +1,15 @@
 # @lynx-js/react-use
 
+## 0.0.4
+
+### Patch Changes
+
+- 90dce6d: Introduce exposure hooks:
+
+  - `useExposureForNode`: Node-level exposure hook with optional admission gating.
+  - `useExposureForPage`: Page-level exposure hook handling multiple items via `GlobalEventEmitter`.
+  - `useStayTime`: Tracks element visibility duration with optional manual control.
+
 ## 0.0.3
 
 ### Patch Changes
