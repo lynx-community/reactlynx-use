@@ -29,6 +29,7 @@ export type { UseInputOptions } from "./useInput.js";
 export { default as useInput } from "./useInput.js";
 export { default as useIntersection } from "./useIntersection.js";
 export { default as useMainThreadImperativeHandle } from "./useMainThreadImperativeHandle.js";
+export { default as useTapAway } from "./useTapAway.js";
 export type { TapLockDirection, UseTapLockOptions } from "./useTapLock.js";
 export { default as useTapLock } from "./useTapLock.js";
 export type { UseTimeoutReturn } from "./useTimeout.js";
