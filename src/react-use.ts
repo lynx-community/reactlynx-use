@@ -1,27 +1,25 @@
-import {
-  createMemo as _createMemo,
-  useBoolean as _useBoolean,
-  useCounter as _useCounter,
-  useDebounce as _useDebounce,
-  useDefault as _useDefault,
-  useEffectOnce as _useEffectOnce,
-  useError as _useError,
-  useLatest as _useLatest,
-  useLifecycles as _useLifecycles,
-  useMap as _useMap,
-  useMountedState as _useMountedState,
-  useNumber as _useNumber,
-  usePrevious as _usePrevious,
-  useQueue as _useQueue,
-  useSet as _useSet,
-  useSetState as _useSetState,
-  useThrottle as _useThrottle,
-  useThrottleFn as _useThrottleFn,
-  useToggle as _useToggle,
-  useUnmount as _useUnmount,
-  useUnmountPromise as _useUnmountPromise,
-  useUpdateEffect as _useUpdateEffect,
-} from 'react-use';
+import { default as _createMemo } from 'react-use/esm/factory/createMemo';
+import { default as _useBoolean } from 'react-use/esm/useBoolean';
+import { default as _useCounter } from 'react-use/esm/useCounter';
+import { default as _useDebounce } from 'react-use/esm/useDebounce';
+import { default as _useDefault } from 'react-use/esm/useDefault';
+import { default as _useEffectOnce } from 'react-use/esm/useEffectOnce';
+import { default as _useError } from 'react-use/esm/useError';
+import { default as _useLatest } from 'react-use/esm/useLatest';
+import { default as _useLifecycles } from 'react-use/esm/useLifecycles';
+import { default as _useMap } from 'react-use/esm/useMap';
+import { default as _useMountedState } from 'react-use/esm/useMountedState';
+import { default as _useNumber } from 'react-use/esm/useNumber';
+import { default as _usePrevious } from 'react-use/esm/usePrevious';
+import { default as _useQueue } from 'react-use/esm/useQueue';
+import { default as _useSet } from 'react-use/esm/useSet';
+import { default as _useSetState } from 'react-use/esm/useSetState';
+import { default as _useThrottle } from 'react-use/esm/useThrottle';
+import { default as _useThrottleFn } from 'react-use/esm/useThrottleFn';
+import { default as _useToggle } from 'react-use/esm/useToggle';
+import { default as _useUnmount } from 'react-use/esm/useUnmount';
+import { default as _useUnmountPromise } from 'react-use/esm/useUnmountPromise';
+import { default as _useUpdateEffect } from 'react-use/esm/useUpdateEffect';
 import { backgroundOnlyFactory as factory } from './backgroundOnlyFactory';
 import {
   useExposureForNode as _useExposureForNode,
