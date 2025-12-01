@@ -1,5 +1,11 @@
 # @lynx-js/react-use
 
+## 0.0.5
+
+### Patch Changes
+
+- 9803c0a: Use deep import paths for `react-use`.
+
 ## 0.0.4
 
 ### Patch Changes
