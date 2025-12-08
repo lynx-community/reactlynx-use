@@ -36,8 +36,8 @@ describe('usePointerEvent (BT) integration', () => {
     expect(onPointerDown).toHaveBeenCalledTimes(1)
     const e = onPointerDown.mock.calls[0][0]
     expect(e.pointerType).toBe('touch')
-    expect(e.x).toBe(50)
-    expect(e.y).toBe(60)
+    expect(e.x).toBe(151)
+    expect(e.y).toBe(161)
     expect(e.pointerId).toBe(1)
     expect(e.isPrimary).toBe(true)
     expect(e.pageX).toBe(151)
@@ -95,7 +95,8 @@ describe('usePointerEvent (MT) integration', () => {
     })
     const e = await read() as CustomPointerEventMT
     expect(e.pointerType).toBe('touch')
-    expect(e.x).toBe(7)
+    expect(e.x).toBe(100)
+    expect(e.y).toBe(101)
     expect(e.pointerId).toBe(9)
     // target/currentTarget may be omitted in test env
   })

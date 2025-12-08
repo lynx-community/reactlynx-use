@@ -1,6 +1,23 @@
 import type { MainThread, MouseEvent, Touch, TouchEvent } from '@lynx-js/types'
 
-type TouchAction = 'touchstart' | 'touchmove' | 'touchend'
+type TouchAction = 'touchstart' | 'touchmove' | 'touchend' | 'touchcancel'
+
+interface UseTouchEmulationReturn {
+  bindtouchstart?: (e: TouchEvent) => void
+  bindmousedown?: (e: MouseEvent) => void
+  bindtouchmove?: (e: TouchEvent) => void
+  bindmousemove?: (e: MouseEvent) => void
+  bindtouchend?: (e: TouchEvent) => void
+  bindtouchcancel?: (e: TouchEvent) => void
+  bindmouseup?: (e: MouseEvent) => void
+  'main-thread:bindtouchstart'?: (e: MainThread.TouchEvent) => void
+  'main-thread:bindmousedown'?: (e: MainThread.MouseEvent) => void
+  'main-thread:bindtouchmove'?: (e: MainThread.TouchEvent) => void
+  'main-thread:bindmousemove'?: (e: MainThread.MouseEvent) => void
+  'main-thread:bindtouchend'?: (e: MainThread.TouchEvent) => void
+  'main-thread:bindmouseup'?: (e: MainThread.MouseEvent) => void
+  'main-thread:bindtouchcancel'?: (e: MainThread.TouchEvent) => void
+}
 
 function toTouchEvent(
   event: MouseEvent | TouchEvent,
@@ -19,7 +36,7 @@ function toTouchEvent(
   const touches = type === 'touchend' ? [] : [touch]
   const changedTouches = [touch]
   return {
-    detail: { x: mouse.x, y: mouse.y },
+    detail: { x: mouse.pageX, y: mouse.pageY },
     touches,
     changedTouches,
   } as unknown as TouchEvent
@@ -43,7 +60,7 @@ function toTouchEventMT(
   const touches = type === 'touchend' ? [] : [touch]
   const changedTouches = [touch]
   return {
-    detail: { x: mouse.x, y: mouse.y },
+    detail: { x: mouse.pageX, y: mouse.pageY },
     touches,
     changedTouches,
     target: mouse.target,
@@ -55,44 +72,22 @@ function useTouchEmulation({
   onTouchStart,
   onTouchMove,
   onTouchEnd,
+  onTouchCancel,
   onTouchStartMT,
   onTouchMoveMT,
   onTouchEndMT,
+  onTouchCancelMT,
 }: {
   onTouchStart?: (event: TouchEvent) => void
   onTouchMove?: (event: TouchEvent) => void
   onTouchEnd?: (event: TouchEvent) => void
+  onTouchCancel?: (event: TouchEvent) => void
   onTouchStartMT?: (event: MainThread.TouchEvent) => void
   onTouchMoveMT?: (event: MainThread.TouchEvent) => void
   onTouchEndMT?: (event: MainThread.TouchEvent) => void
-}): {
-  'bindtouchstart'?: (e: TouchEvent) => void
-  'bindmousedown'?: (e: MouseEvent) => void
-  'bindtouchmove'?: (e: TouchEvent) => void
-  'bindmousemove'?: (e: MouseEvent) => void
-  'bindtouchend'?: (e: TouchEvent) => void
-  'bindmouseup'?: (e: MouseEvent) => void
-  'main-thread:bindtouchstart'?: (e: MainThread.TouchEvent) => void
-  'main-thread:bindmousedown'?: (e: MainThread.MouseEvent) => void
-  'main-thread:bindtouchmove'?: (e: MainThread.TouchEvent) => void
-  'main-thread:bindmousemove'?: (e: MainThread.MouseEvent) => void
-  'main-thread:bindtouchend'?: (e: MainThread.TouchEvent) => void
-  'main-thread:bindmouseup'?: (e: MainThread.MouseEvent) => void
-} {
-  const result: {
-    'bindtouchstart'?: (e: TouchEvent) => void
-    'bindmousedown'?: (e: MouseEvent) => void
-    'bindtouchmove'?: (e: TouchEvent) => void
-    'bindmousemove'?: (e: MouseEvent) => void
-    'bindtouchend'?: (e: TouchEvent) => void
-    'bindmouseup'?: (e: MouseEvent) => void
-    'main-thread:bindtouchstart'?: (e: MainThread.TouchEvent) => void
-    'main-thread:bindmousedown'?: (e: MainThread.MouseEvent) => void
-    'main-thread:bindtouchmove'?: (e: MainThread.TouchEvent) => void
-    'main-thread:bindmousemove'?: (e: MainThread.MouseEvent) => void
-    'main-thread:bindtouchend'?: (e: MainThread.TouchEvent) => void
-    'main-thread:bindmouseup'?: (e: MainThread.MouseEvent) => void
-  } = {}
+  onTouchCancelMT?: (event: MainThread.TouchEvent) => void
+}): UseTouchEmulationReturn {
+  const result: UseTouchEmulationReturn = {}
 
   if (onTouchStart) {
     result.bindtouchstart = (event: TouchEvent) => {
@@ -118,6 +113,12 @@ function useTouchEmulation({
     }
     result.bindmouseup = (event: MouseEvent) => {
       onTouchEnd(toTouchEvent(event, 'touchend'))
+    }
+  }
+
+  if (onTouchCancel) {
+    result.bindtouchend = (event: TouchEvent) => {
+      onTouchCancel(toTouchEvent(event, 'touchcancel'))
     }
   }
 
@@ -151,6 +152,13 @@ function useTouchEmulation({
     result['main-thread:bindmouseup'] = (event: MainThread.MouseEvent) => {
       'main thread'
       onTouchEndMT(toTouchEventMT(event, 'touchend'))
+    }
+  }
+
+  if (onTouchCancelMT) {
+    result['main-thread:bindtouchcancel'] = (event: MainThread.TouchEvent) => {
+      'main thread'
+      onTouchCancelMT(toTouchEventMT(event, 'touchend'))
     }
   }
 

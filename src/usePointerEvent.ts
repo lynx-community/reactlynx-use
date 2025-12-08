@@ -1,6 +1,6 @@
 import type { MainThread, MouseEvent, Touch, TouchEvent } from '@lynx-js/types'
 
-type PointerAction = 'pointerdown' | 'pointermove' | 'pointerup'
+type PointerAction = 'pointerdown' | 'pointermove' | 'pointerup' | 'pointercancel'
 
 interface CustomPointerEvent {
   type: PointerAction
@@ -19,6 +19,23 @@ interface CustomPointerEvent {
   originalEvent: unknown
 }
 
+interface UsePointerEventReturn {
+  bindmousedown?: (e: MouseEvent) => void
+  bindtouchstart?: (e: TouchEvent) => void
+  bindmousemove?: (e: MouseEvent) => void
+  bindtouchmove?: (e: TouchEvent) => void
+  bindmouseup?: (e: MouseEvent) => void
+  bindtouchend?: (e: TouchEvent) => void
+  bindtouchcancel?: (e: TouchEvent) => void
+  'main-thread:bindmousedown'?: (e: MainThread.MouseEvent) => void
+  'main-thread:bindtouchstart'?: (e: MainThread.TouchEvent) => void
+  'main-thread:bindmousemove'?: (e: MainThread.MouseEvent) => void
+  'main-thread:bindtouchmove'?: (e: MainThread.TouchEvent) => void
+  'main-thread:bindmouseup'?: (e: MainThread.MouseEvent) => void
+  'main-thread:bindtouchend'?: (e: MainThread.TouchEvent) => void
+  'main-thread:bindtouchcancel'?: (e: MainThread.TouchEvent) => void
+}
+
 interface CustomPointerEventMT extends CustomPointerEvent {
   target: MainThread.Element
   currentTarget: MainThread.Element
@@ -32,8 +49,6 @@ function unifyPointerEvent(
   const isTouch = 'detail' in event
   if (isTouch) {
     const te = event as TouchEvent
-    const x = te.detail.x
-    const y = te.detail.y
     const t: Touch | undefined = te.touches?.[0] ?? te.changedTouches?.[0]
     const pointerId = t?.identifier ?? 0
     const touchesLen = te.touches?.length ?? 0
@@ -42,8 +57,8 @@ function unifyPointerEvent(
     return {
       type,
       pointerType: 'touch',
-      x,
-      y,
+      x: t?.pageX,
+      y: t?.pageY,
       pointerId,
       isPrimary,
       pageX: t?.pageX,
@@ -86,8 +101,6 @@ function unifyPointerEventMT(
   const isTouch = 'detail' in event
   if (isTouch) {
     const te = event as MainThread.TouchEvent
-    const x = te.detail.x
-    const y = te.detail.y
     const t: Touch | undefined = te.touches?.[0] ?? te.changedTouches?.[0]
     const pointerId = t?.identifier ?? 0
     const touchesLen = te.touches?.length ?? 0
@@ -96,8 +109,8 @@ function unifyPointerEventMT(
     return {
       type,
       pointerType: 'touch',
-      x,
-      y,
+      x: t?.pageX,
+      y: t?.pageY,
       pointerId,
       isPrimary,
       pageX: t?.pageX,
@@ -146,44 +159,22 @@ function usePointerEvent({
   onPointerDown,
   onPointerUp,
   onPointerMove,
+  onPointerCancel,
   onPointerUpMT,
   onPointerMoveMT,
   onPointerDownMT,
+  onPointerCancelMT,
 }: {
   onPointerDown?: (event: CustomPointerEvent) => void
   onPointerUp?: (event: CustomPointerEvent) => void
   onPointerMove?: (event: CustomPointerEvent) => void
+  onPointerCancel?: (event: CustomPointerEvent) => void
   onPointerUpMT?: (event: CustomPointerEventMT) => void
   onPointerMoveMT?: (event: CustomPointerEventMT) => void
   onPointerDownMT?: (event: CustomPointerEventMT) => void
-}): {
-  'bindmousedown'?: (e: MouseEvent) => void
-  'bindtouchstart'?: (e: TouchEvent) => void
-  'bindmousemove'?: (e: MouseEvent) => void
-  'bindtouchmove'?: (e: TouchEvent) => void
-  'bindmouseup'?: (e: MouseEvent) => void
-  'bindtouchend'?: (e: TouchEvent) => void
-  'main-thread:bindmousedown'?: (e: MainThread.MouseEvent) => void
-  'main-thread:bindtouchstart'?: (e: MainThread.TouchEvent) => void
-  'main-thread:bindmousemove'?: (e: MainThread.MouseEvent) => void
-  'main-thread:bindtouchmove'?: (e: MainThread.TouchEvent) => void
-  'main-thread:bindmouseup'?: (e: MainThread.MouseEvent) => void
-  'main-thread:bindtouchend'?: (e: MainThread.TouchEvent) => void
-} {
-  const result: {
-    'bindmousedown'?: (e: MouseEvent) => void
-    'bindtouchstart'?: (e: TouchEvent) => void
-    'bindmousemove'?: (e: MouseEvent) => void
-    'bindtouchmove'?: (e: TouchEvent) => void
-    'bindmouseup'?: (e: MouseEvent) => void
-    'bindtouchend'?: (e: TouchEvent) => void
-    'main-thread:bindmousedown'?: (e: MainThread.MouseEvent) => void
-    'main-thread:bindtouchstart'?: (e: MainThread.TouchEvent) => void
-    'main-thread:bindmousemove'?: (e: MainThread.MouseEvent) => void
-    'main-thread:bindtouchmove'?: (e: MainThread.TouchEvent) => void
-    'main-thread:bindmouseup'?: (e: MainThread.MouseEvent) => void
-    'main-thread:bindtouchend'?: (e: MainThread.TouchEvent) => void
-  } = {}
+  onPointerCancelMT?: (event: CustomPointerEventMT) => void
+}): UsePointerEventReturn {
+  const result: UsePointerEventReturn = {}
 
   if (onPointerDown) {
     result.bindmousedown = (event: MouseEvent) => {
@@ -209,6 +200,12 @@ function usePointerEvent({
     }
     result.bindtouchend = (event: TouchEvent) => {
       onPointerUp(unifyPointerEvent(event, 'pointerup'))
+    }
+  }
+
+  if (onPointerCancel) {
+    result.bindtouchcancel = (event: TouchEvent) => {
+      onPointerCancel(unifyPointerEvent(event, 'pointercancel'))
     }
   }
 
@@ -242,6 +239,13 @@ function usePointerEvent({
     result['main-thread:bindtouchend'] = (event: MainThread.TouchEvent) => {
       'main thread'
       onPointerUpMT(unifyPointerEventMT(event, 'pointerup'))
+    }
+  }
+
+  if (onPointerCancelMT) {
+    result['main-thread:bindtouchcancel'] = (event: MainThread.TouchEvent) => {
+      'main thread'
+      onPointerCancelMT(unifyPointerEventMT(event, 'pointercancel'))
     }
   }
 

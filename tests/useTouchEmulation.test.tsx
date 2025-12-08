@@ -19,9 +19,9 @@ describe('useTouchEmulation (BT) integration', () => {
     const e = onTouchStart.mock.calls[0][0] as unknown as TouchEvent
     // synthesized touch event fields
     // @ts-expect-error test environment type narrowing
-    expect(e.detail.x).toBe(10)
+    expect(e.detail.x).toBe(110)
     // @ts-expect-error test environment type narrowing
-    expect(e.detail.y).toBe(20)
+    expect(e.detail.y).toBe(120)
     expect(e.touches.length).toBe(1)
     expect(e.changedTouches.length).toBe(1)
     expect(e.touches[0].clientX).toBe(210)
@@ -60,7 +60,7 @@ describe('useTouchEmulation (BT) integration', () => {
     expect(onTouchEnd).toHaveBeenCalledTimes(1)
     const e = onTouchEnd.mock.calls[0][0] as unknown as TouchEvent
     // @ts-expect-error test environment type narrowing
-    expect(e.detail.x).toBe(1)
+    expect(e.detail.x).toBe(101)
     expect(e.touches.length).toBe(0)
     expect(e.changedTouches.length).toBe(1)
   })
@@ -89,10 +89,50 @@ describe('useTouchEmulation (MT) integration', () => {
     })
     const e = await read()
     // @ts-expect-error test environment type narrowing
-    expect(e?.detail.x).toBe(15)
+    expect(e?.detail.x).toBe(115)
     // @ts-expect-error test environment type narrowing
     expect(e?.touches.length).toBe(1)
     // target/currentTarget may be omitted in test env
   })
 })
 
+describe('useTouchEmulation cancel behavior', () => {
+  it('BT: touchend triggers onTouchCancel and overrides onTouchEnd when both provided', () => {
+    const onTouchEnd = vi.fn()
+    const onTouchCancel = vi.fn()
+    const Comp = () => {
+      const props = useTouchEmulation({ onTouchEnd, onTouchCancel })
+      return (
+        <view {...props}></view>
+      )
+    }
+    const { container } = render(<Comp />)
+    fireEvent.touchend(container.firstChild, { detail: { x: 5, y: 6 }, touches: [] })
+    expect(onTouchCancel).toHaveBeenCalledTimes(1)
+    expect(onTouchEnd).toHaveBeenCalledTimes(0)
+  })
+
+  it('MT: touchcancel triggers onTouchCancelMT when provided', async () => {
+    let mtCalledRef: MainThreadRef<boolean>
+    const Comp = () => {
+      mtCalledRef = useMainThreadRef<boolean>(false)
+      const props = useTouchEmulation({
+        onTouchCancelMT: () => {
+          'main thread'
+          mtCalledRef.current = true
+        },
+      })
+      return (
+        <view {...props}></view>
+      )
+    }
+    const { container } = render(<Comp />)
+    fireEvent.touchcancel(container.firstChild, { detail: { x: 7, y: 8 }, touches: [] })
+    const read = runOnMainThread(() => {
+      'main thread'
+      return mtCalledRef?.current
+    })
+    const called = await read()
+    expect(called).toBe(true)
+  })
+})
