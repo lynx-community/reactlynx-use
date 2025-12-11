@@ -1,5 +1,12 @@
 # @lynx-js/react-use
 
+## 0.0.7
+
+### Patch Changes
+
+- 37ec953: Fix an issue for `useTouchEmulation` that emulated `touchMove` will be triggered by mouseMove, even when mouseDown not called
+- 37ec953: Add proper memoization for `usePointerEvent` and `useTouchEmulation`, so reRender will not triggered unintentionally
+
 ## 0.0.6
 
 ### Patch Changes
