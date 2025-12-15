@@ -1,5 +1,11 @@
 # @lynx-js/react-use
 
+## 0.1.0
+
+### Minor Changes
+
+- 087d5f2: Update peerDependencies `@lynx-js/react` to >= 0.105.1
+
 ## 0.0.7
 
 ### Patch Changes
