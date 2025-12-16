@@ -61,7 +61,9 @@
 
 - [**主线程脚本**](./docs/zh/mts/README.md)
   - [`useMainThreadImperativeHandle`](./docs/zh/mts/useMainThreadImperativeHandle.md) &mdash; React [useImperativeHandle](https://react.dev/reference/react/useImperativeHandle) 的主线程版本。
+  - [`usePointerEvent`](./docs/usePointerEvent.md) &mdash; 用于将 [`TouchEvent`](https://lynxjs.org/api/lynx-api/event/touch-event.html) 与 [`MouseEvent`](https://lynxjs.org/api/lynx-api/event/mouse-event.html) 统一为 `PointerEvent` 的 hook，便于跨平台处理指针事件。
   - [`useTapLock`](./docs/zh/mts/useTapLock.md) &mdash; 用于锁定点击事件的 hook。
+  - [`useTouchEmulation`](./docs/useTouchEmulation.md) &mdash; 用于从 [`MouseEvent`](https://lynxjs.org/api/lynx-api/event/mouse-event.html) 合成 [`TouchEvent`](https://lynxjs.org/api/lynx-api/event/touch-event.html) 的 hook，使现有基于触摸的事件处理逻辑可以无缝兼容鼠标输入，便于从仅触摸代码迁移。
   - [`useVelocity`](./docs/zh/mts/useVelocity.md) &mdash; 用于跟踪 tap 速度和方向的 hook。
     <br/>
     <br/>
