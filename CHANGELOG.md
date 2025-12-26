@@ -1,5 +1,11 @@
 # @lynx-js/react-use
 
+## 0.1.1
+
+### Patch Changes
+
+- e713f03: Ensure ESM imports include `.js` file extension.
+
 ## 0.1.0
 
 ### Minor Changes
