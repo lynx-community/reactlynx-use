@@ -6,7 +6,7 @@ import {
   useRef,
   useState,
 } from '@lynx-js/react';
-import { useMountedState } from './react-use';
+import { useMountedState } from './react-use.js';
 
 export type PromiseType<P extends Promise<any>> = P extends Promise<infer T> ? T
   : never;

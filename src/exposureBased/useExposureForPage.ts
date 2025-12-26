@@ -4,8 +4,8 @@ import type {
   IUseExposureForPageReturn,
   TExposureAttrBag,
   UIAppearanceTargetDetail,
-} from "./types";
-import { createMultiAdmissionGate } from "./utils";
+} from "./types.js";
+import { createMultiAdmissionGate } from "./utils.js";
 
 // Page-level exposure hook based on Lynx GlobalEventEmitter with admission gating
 export function useExposureForPage<
