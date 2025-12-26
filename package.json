@@ -1,7 +1,7 @@
 {
   "name": "@lynx-js/react-use",
   "description": "A React-style hooks library designed specifically for ReactLynx",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "sideEffects": false,
   "repository": {
