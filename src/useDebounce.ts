@@ -1,7 +1,7 @@
 // biome-ignore-all lint/suspicious/noExplicitAny: need any here
 
 import { type DependencyList, useEffect } from '@lynx-js/react';
-import useTimeoutFn from './useTimeoutFn';
+import useTimeoutFn from './useTimeoutFn.js';
 
 export type UseDebounceReturn = [() => boolean | null, () => void];
 

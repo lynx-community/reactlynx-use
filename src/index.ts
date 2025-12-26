@@ -2,7 +2,7 @@ export {
   useExposureForNode,
   useExposureForPage,
   useStayTime,
-} from "./exposureBased";
+} from "./exposureBased/index.js";
 export type {
   IUseExposureForNodeOptions,
   IUseExposureForNodeReturn,
