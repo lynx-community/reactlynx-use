@@ -1,5 +1,58 @@
 # @lynx-js/react-use
 
+## 0.1.1
+
+### Patch Changes
+
+- e713f03: Ensure ESM imports include `.js` file extension.
+
+## 0.1.0
+
+### Minor Changes
+
+- 087d5f2: Update peerDependencies `@lynx-js/react` to >= 0.105.1
+
+## 0.0.7
+
+### Patch Changes
+
+- 37ec953: Fix an issue for `useTouchEmulation` that emulated `touchMove` will be triggered by mouseMove, even when mouseDown not called
+- 37ec953: Add proper memoization for `usePointerEvent` and `useTouchEmulation`, so reRender will not triggered unintentionally
+
+## 0.0.6
+
+### Patch Changes
+
+- 9db882a: Add `usePointerEvent` and `useTouchEmulation` to handle both `TouchEvent` and `MouseEvent`.
+
+  ```tsx
+  import {
+    usePointerEvent,
+    CustomPointerEvent,
+    CustomPointerEventMT,
+  } from "@lynx-js/react-use";
+
+  function App() {
+    const pointerHandlers = usePointerEvent({
+      onPointerDown: (event: CustomPointerEvent) => {
+        console.log("Pointer down", event);
+      },
+      onPointerDownMT: (event: CustomPointerEventMT) => {
+        "main thread";
+        console.log("Pointer down on main thread", event);
+      },
+    });
+
+    return <view {...pointerHandlers}></view>;
+  }
+  ```
+
+## 0.0.5
+
+### Patch Changes
+
+- 9803c0a: Use deep import paths for `react-use`.
+
 ## 0.0.4
 
 ### Patch Changes

@@ -61,7 +61,9 @@
 
 - [**MainThreadScripts**](./docs/en/mts/README.md)
   - [`useMainThreadImperativeHandle`](./docs/en/mts/useMainThreadImperativeHandle.md) &mdash; main-thread version of React's [useImperativeHandle](https://react.dev/reference/react/useImperativeHandle).
+  - [`usePointerEvent`](./docs/en/mts/usePointerEvent.md) &mdash; a Hook unifies [`TouchEvent`](https://lynxjs.org/api/lynx-api/event/touch-event.html) and [`MouseEvent`](https://lynxjs.org/api/lynx-api/event/mouse-event.html) into `PointerEvent`, to help with handling pointer events in a cross-platform manner.
   - [`useTapLock`](./docs/en/mts/useTapLock.md) &mdash; a hook for locking tap events.
+  - [`useTouchEmulation`](./docs/en/mts/useTouchEmulation) &mdash; a Hook synthesizes [`TouchEvent`](https://lynxjs.org/api/lynx-api/event/touch-event.html) from [`MouseEvent`](https://lynxjs.org/api/lynx-api/event/mouse-event.html), so existing touch handlers can work seamlessly with mouse input. Useful for migration from touch-only code.
   - [`useVelocity`](./docs/en/mts/useVelocity.md) &mdash; a hook that tracks touch velocity and direction with smoothing support.
     <br/>
     <br/>

@@ -9,8 +9,8 @@ import type {
   IUseExposureForNodeOptions,
   IUseStayTimeOptions,
   IUseStayTimeReturn,
-} from "./types";
-import { useExposureForNode } from "./useExposureForNode";
+} from "./types.js";
+import { useExposureForNode } from "./useExposureForNode.js";
 
 export function useStayTime<
   EA extends Record<string, string | number | boolean | undefined>

@@ -1,6 +1,6 @@
 import { type DependencyList, useEffect } from '@lynx-js/react';
-import type { FunctionReturningPromise } from './useAsyncFn';
-import useAsyncFn from './useAsyncFn';
+import type { FunctionReturningPromise } from './useAsyncFn.js';
+import useAsyncFn from './useAsyncFn.js';
 
 export default function useAsync<T extends FunctionReturningPromise>(
   fn: T,

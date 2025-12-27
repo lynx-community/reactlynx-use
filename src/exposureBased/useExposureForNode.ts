@@ -10,8 +10,8 @@ import type {
   IUseExposureForNodeReturn,
   TExposureAttrBag,
   UIAppearanceTargetDetail,
-} from "./types";
-import { createAdmissionGate } from "./utils";
+} from "./types.js";
+import { createAdmissionGate } from "./utils.js";
 
 // Node-level exposure hook with admission gating
 export function useExposureForNode<
