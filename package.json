@@ -47,7 +47,7 @@
     "@types/react": "^18.3.26",
     "dprint": "^0.50.2",
     "husky": "^9.1.7",
-    "jsdom": "^25.0.1",
+    "jsdom": "27.1.0",
     "lint-staged": "^16.2.6",
     "rsbuild-plugin-publint": "^0.3.3",
     "typescript": "^5.9.3",
