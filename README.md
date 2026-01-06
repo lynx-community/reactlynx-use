@@ -99,6 +99,7 @@
   - [`useQueue`](./docs/en/state/useQueue.md) &mdash; implements simple queue.
   - [`useSet`](./docs/en/state/useSet.md) &mdash; tracks state of a Set.
   - [`useSetState`](./docs/en/state/useSetState.md) &mdash; creates `setState` method which works like `this.setState`.
+  - [`useUniqueId`](./docs/en/state/useUniqueId.md) &mdash; generates a unique ID.
 
 <br />
 <br />

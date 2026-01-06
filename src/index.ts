@@ -38,6 +38,7 @@ export { default as useTimeout } from './useTimeout.js';
 export type { UseTimeoutFnReturn } from './useTimeoutFn.js';
 export { default as useTimeoutFn } from './useTimeoutFn.js';
 export { default as useTouchEmulation, default as useTouchEvent } from './useTouchEmulation.js';
+export { default as useUniqueId } from './useUniqueId.js';
 export type {
   Direction,
   UseVelocityOptions,
