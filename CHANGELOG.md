@@ -1,5 +1,11 @@
 # @lynx-js/react-use
 
+## 0.1.2
+
+### Patch Changes
+
+- 6d5b76f: Adds use-unique-id hook
+
 ## 0.1.1
 
 ### Patch Changes
