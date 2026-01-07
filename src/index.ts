@@ -25,6 +25,8 @@ export type {
 export { default as useAsyncFn } from './useAsyncFn.js';
 export { default as useDebounce } from './useDebounce.js';
 export { default as useEventListener } from './useEventListener.js';
+export type { DraftFunction, ImmerHook, Updater } from './useImmer.js';
+export { default as useImmer } from './useImmer.js';
 export type { UseInputOptions } from './useInput.js';
 export { default as useInput } from './useInput.js';
 export { default as useIntersection } from './useIntersection.js';
