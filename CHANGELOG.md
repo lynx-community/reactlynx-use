@@ -1,5 +1,11 @@
 # @lynx-js/react-use
 
+## 0.1.3
+
+### Patch Changes
+
+- 61137f1: feat: added use-immer hooks to manage states using immer
+
 ## 0.1.2
 
 ### Patch Changes
