@@ -98,6 +98,7 @@
   - [`usePrevious`](./docs/zh/state/usePrevious.md) &mdash; 返回之前的 state 或 props。
   - [`useQueue`](./docs/zh/state/useQueue.md) &mdash; 实现简单的队列。
   - [`useSet`](./docs/zh/state/useSet.md) &mdash; 跟踪 Set 的状态。
+  - [`useSetInitData`](./docs/zh/state/useSetInitData.md) &mdash; 将 initData 暴露为可修改的状态。
   - [`useSetState`](./docs/zh/state/useSetState.md) &mdash; 创建类似 `this.setState` 工作方式的 `setState` 方法。
   - [`useUniqueId`](./docs/zh/state/useUniqueId.md) &mdash; 生成唯一 ID。
 
