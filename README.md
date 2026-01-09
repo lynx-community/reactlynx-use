@@ -98,6 +98,7 @@
   - [`usePrevious`](./docs/en/state/usePrevious.md) &mdash; returns the previous state or props.
   - [`useQueue`](./docs/en/state/useQueue.md) &mdash; implements simple queue.
   - [`useSet`](./docs/en/state/useSet.md) &mdash; tracks state of a Set.
+  - [`useSetInitData`](./docs/en/state/useSetInitData.md) &mdash; exposes initData as a modifiable state.
   - [`useSetState`](./docs/en/state/useSetState.md) &mdash; creates `setState` method which works like `this.setState`.
   - [`useUniqueId`](./docs/en/state/useUniqueId.md) &mdash; generates a unique ID.
 
