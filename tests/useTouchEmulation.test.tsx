@@ -120,7 +120,7 @@ describe('useTouchEmulation memoization', () => {
     };
 
     const { rerender } = render(<Comp move={onTouchMove1} />);
-    const first = lastProps!;
+    const first = lastProps as ReturnType<typeof useTouchEmulation>;
     rerender(<Comp move={onTouchMove2} />);
     expect(lastProps).not.toBe(first);
     expect(lastProps?.bindmousemove).not.toBe(first.bindmousemove);

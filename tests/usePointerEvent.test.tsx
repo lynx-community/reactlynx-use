@@ -169,7 +169,7 @@ describe('usePointerEvent memoization', () => {
     };
 
     const { rerender } = render(<Comp move={onPointerMove1} />);
-    const first = lastProps!;
+    const first = lastProps as ReturnType<typeof usePointerEvent>;
     rerender(<Comp move={onPointerMove2} />);
     expect(lastProps).not.toBe(first);
     expect(lastProps?.bindmousemove).not.toBe(first.bindmousemove);
