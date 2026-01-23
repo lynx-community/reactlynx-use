@@ -93,6 +93,7 @@
   - [`useToggle` and `useBoolean`](./docs/en/state/useToggle.md) &mdash; tracks state of a boolean.
   - [`useCounter` and `useNumber`](./docs/en/state/useCounter.md) &mdash; tracks state of a number.
   - [`useDefault`](./docs/en/state/useDefault.md) &mdash; returns the default value when state is `null` or `undefined`.
+  - [`useImmer`](./docs/en/state/useImmer.md) &mdash; manage complex nested state with ease using [immer](https://github.com/immerjs/immer).
   - [`useLatest`](./docs/en/state/useLatest.md) &mdash; returns the latest state or props
   - [`useMap`](./docs/en/state/useMap.md) &mdash; tracks state of an object.
   - [`usePrevious`](./docs/en/state/usePrevious.md) &mdash; returns the previous state or props.

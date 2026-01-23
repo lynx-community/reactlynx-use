@@ -93,6 +93,7 @@
   - [`useToggle` 和 `useBoolean`](./docs/zh/state/useToggle.md) &mdash; 跟踪布尔值的状态。
   - [`useCounter` 和 `useNumber`](./docs/zh/state/useCounter.md) &mdash; 跟踪数字的状态。
   - [`useDefault`](./docs/zh/state/useDefault.md) &mdash; 当状态为 `null` 或 `undefined` 时返回默认值。
+  - [`useImmer`](./docs/zh/state/useImmer.md) &mdash; 使用 [immer](https://github.com/immerjs/immer) 轻松管理复杂的嵌套状态。
   - [`useLatest`](./docs/zh/state/useLatest.md) &mdash; 返回最新的 state 或 props
   - [`useMap`](./docs/zh/state/useMap.md) &mdash; 跟踪对象的状态。
   - [`usePrevious`](./docs/zh/state/usePrevious.md) &mdash; 返回之前的 state 或 props。
