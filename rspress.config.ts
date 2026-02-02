@@ -4,7 +4,6 @@ import { fileURLToPath } from 'node:url';
 import { defineConfig } from '@rspress/core';
 import { transformerCompatibleMetaHighlight } from '@rspress/core/shiki-transformers';
 import { pluginLlms } from '@rspress/plugin-llms';
-import ghPages from 'rspress-plugin-gh-pages';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -86,21 +85,6 @@ function getLocaleSidebar(lang: 'en' | 'zh', routePrefix: string) {
 }
 
 const packageJson = JSON.parse(fs.readFileSync(path.join(__dirname, 'package.json'), 'utf-8'));
-const deployEnabled = process.env.RSPRESS_DEPLOY === '1' || process.env.RSPRESS_DEPLOY === 'true';
-
-function normalizeGitRepoUrl(rawUrl: unknown): string | undefined {
-  if (typeof rawUrl !== 'string') return undefined;
-  let url = rawUrl;
-  if (url.startsWith('git+')) url = url.slice(4);
-  return url;
-}
-
-const ghPagesRepo =
-  process.env.RSPRESS_GH_PAGES_REPO ??
-  normalizeGitRepoUrl(packageJson?.repository?.url) ??
-  normalizeGitRepoUrl(packageJson?.repository);
-
-const ghPagesBranch = process.env.RSPRESS_GH_PAGES_BRANCH ?? 'gh-pages';
 const siteBase = process.env.RSPRESS_SITE_BASE;
 
 const localesConfig = [
@@ -163,9 +147,6 @@ export default defineConfig({
     },
   },
   plugins: [pluginLlms()],
-  builderConfig: {
-    plugins: deployEnabled && ghPagesRepo ? [ghPages({ repo: ghPagesRepo, branch: ghPagesBranch, siteBase })] : [],
-  },
   themeConfig: {
     llmsUI: true,
     socialLinks,
