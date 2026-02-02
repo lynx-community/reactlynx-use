@@ -1,0 +1,1759 @@
+---
+url: /reactlynx-use/zh/events/README.md
+---
+
+# Events
+
+_"Events Hooks"_ provide powerful abstractions for handling Lynx events.
+
+
+---
+url: /reactlynx-use/zh/events/useExposureForNode.md
+---
+
+# useExposureForNode
+
+节点级曝光 Hook，可选曝光准入等待。
+
+## 示例
+
+```tsx
+import { useExposureForNode } from "@lynx-js/react-use";
+
+export function HeroCard() {
+  const { isInView, exposureProps } = useExposureForNode({
+    attrs: { "exposure-id": "hero-card", "exposure-scene": "home" },
+    admissionTimeMs: 100,
+    onAppear: (detail) => {
+      console.log("appear", detail["exposure-id"]);
+    },
+    onDisappear: (detail) => {
+      console.log("disappear", detail["exposure-id"]);
+    },
+    onChange: (_detail, { isInView }) => {
+      console.log("isInView", isInView);
+    },
+  });
+
+  return (
+    <view {...exposureProps}>
+      <text>{isInView ? "可见" : "不可见"}</text>
+    </view>
+  );
+}
+```
+
+## 类型定义
+
+```ts
+export interface IUseExposureForNodeOptions<
+  EA extends Record<string, string | number | boolean | undefined>
+> {
+  attrs?: TExposureAttrBag & EA;
+  admissionTimeMs?: number;
+  onAppear?: (e: UIAppearanceTargetDetail) => void;
+  onDisappear?: (e: UIAppearanceTargetDetail) => void;
+  onChange?: (
+    e: UIAppearanceTargetDetail,
+    info: { isInView: boolean }
+  ) => void;
+}
+
+export interface IUseExposureForNodeReturn<
+  EA extends Record<string, string | number | boolean | undefined>
+> {
+  isInView: boolean;
+  exposureProps: {
+    binduiappear?: (e: UIAppearanceTargetDetail) => void;
+    binduidisappear?: (e: UIAppearanceTargetDetail) => void;
+  } & TExposureAttrBag &
+    EA;
+}
+```
+
+
+
+---
+url: /reactlynx-use/zh/events/useExposureForPage.md
+---
+
+# useExposureForPage
+
+页面级曝光 Hook，监听 `GlobalEventEmitter` 的曝光/反曝光事件并支持准入等待。
+
+## 示例
+
+```tsx
+import { useExposureForPage } from "@lynx-js/react-use";
+
+const items = [
+  { id: "card-1", title: "A" },
+  { id: "card-2", title: "B" },
+];
+
+export function Feed() {
+  const { isInView, exposureProps } = useExposureForPage({
+    attrs: { "exposure-scene": "feed" },
+    admissionTimeMs: 80,
+    onAppear: (_detail, info) => console.log("appear", info.exposureId),
+    onDisappear: (_detail, info) => console.log("disappear", info.exposureId),
+  });
+
+  return (
+    <view>
+      {items.map((item) => (
+        <view key={item.id} {...exposureProps({ id: item.id })}>
+          <text>
+            {item.title} {isInView(item.id) ? "(可见)" : "(不可见)"}
+          </text>
+        </view>
+      ))}
+    </view>
+  );
+}
+```
+
+## 类型定义
+
+```ts
+export interface IUseExposureForPageOptions<
+  EA extends Record<string, string | number | boolean | undefined>
+> {
+  attrs?: Omit<TExposureAttrBag, "exposure-id"> & EA;
+  admissionMs?: number;
+  admissionTimeMs?: number;
+  onAppear?: (
+    e: UIAppearanceTargetDetail,
+    info: { exposureId?: string; exposureScene?: string }
+  ) => void;
+  onDisappear?: (
+    e: UIAppearanceTargetDetail,
+    info: { exposureId?: string; exposureScene?: string }
+  ) => void;
+  onChange?: (
+    e: UIAppearanceTargetDetail,
+    info: { isInView: boolean; exposureId?: string; exposureScene?: string }
+  ) => void;
+}
+
+export interface IUseExposureForPageReturn<
+  EA extends Record<string, string | number | boolean | undefined>
+> {
+  isInView: (exposureId: string) => boolean;
+  exposureProps: (p: { id: string; extra?: EA }) => TExposureAttrBag & EA;
+}
+```
+
+
+
+---
+url: /reactlynx-use/zh/events/useStayTime.md
+---
+
+# useStayTime
+
+用于统计元素可见时长的 Hook，支持手动控制。
+
+## 示例
+
+```tsx
+import { useStayTime } from "@lynx-js/react-use";
+
+export function StayTimer() {
+  const {
+    stayTimeMs,
+    isRunning,
+    exposureProps,
+    pause,
+    resume,
+    reset,
+  } = useStayTime({
+    admissionTimeMs: 60,
+    onRunningChange: ({ isRunning, stayTimeMs }) => {
+      console.log("running?", isRunning, "ms:", stayTimeMs);
+    },
+  });
+
+  return (
+    <view>
+      <view {...exposureProps}>
+        <text>停留时长: {stayTimeMs}ms</text>
+        <text>状态: {isRunning ? "计时中" : "已停止"}</text>
+      </view>
+      <button bindtap={pause}>暂停</button>
+      <button bindtap={resume}>恢复</button>
+      <button bindtap={reset}>重置</button>
+    </view>
+  );
+}
+```
+
+## 类型定义
+
+```ts
+export interface IUseStayTimeOptions<
+  EA extends Record<string, string | number | boolean | undefined>
+> extends IUseExposureForNodeOptions<EA> {
+  isStaying?: boolean;
+  onRunningChange?: (info: { isRunning: boolean; stayTimeMs: number }) => void;
+}
+
+export interface IUseStayTimeReturn<
+  EA extends Record<string, string | number | boolean | undefined>
+> {
+  stayTimeMs: number;
+  isRunning: boolean;
+  exposureProps:
+    | {
+        binduiappear?: (e: UIAppearanceTargetDetail) => void;
+        binduidisappear?: (e: UIAppearanceTargetDetail) => void;
+      } & TExposureAttrBag &
+        EA;
+  pause: () => void;
+  resume: () => void;
+  reset: () => void;
+}
+```
+
+
+
+---
+url: /reactlynx-use/zh/lifecycles/README.md
+---
+
+# Lifecycle
+
+> **致谢：** 部分文档基于 [react-use](https://github.com/streamich/react-use/blob/master/docs/Lifecycles.md)
+
+_"Lifecycle Hooks"_ modify and extend built-in React hooks or imitate React Class component lifecycle patterns.
+
+
+
+---
+url: /reactlynx-use/zh/lifecycles/useEffectOnce.md
+---
+
+# useEffectOnce
+
+> **致谢：** Re-export from [react-use](https://github.com/streamich/react-use)
+
+仅运行一次的 [`useEffect`](https://reactjs.org/docs/hooks-reference.html#useeffect)
+
+## 示例
+
+```tsx
+import { useEffectOnce } from "@lynx-js/react-use";
+
+const Demo = () => {
+  useEffectOnce(() => {
+    console.log("Running effect once on mount");
+
+    return () => {
+      console.log("Running clean-up of effect on unmount");
+    };
+  });
+
+  return null;
+};
+```
+
+## 类型定义
+
+```ts
+import type { EffectCallback } from "@lynx-js/react";
+
+declare const useEffectOnce: (effect: EffectCallback) => void;
+```
+
+
+---
+url: /reactlynx-use/zh/lifecycles/useEventListener.md
+---
+
+# useEventListener
+
+用于尽早添加全局事件监听器的 Hook。
+
+## 示例
+
+```tsx
+import { useEventListener } from "@lynx-js/react-use";
+
+const App = () => {
+  // 监听 'exposure' (曝光) 事件
+  useEventListener('exposure', (e) => {
+    console.log("exposure", e);
+  });
+
+  // 监听 'disexposure' (反曝光/消失) 事件
+  useEventListener('disexposure', (e) => {
+    console.log("disexposure", e);
+  });
+
+  return (
+    <view
+      style={{ width: '100px', height: '100px', backgroundColor: 'red' }}
+      exposure-id='a'
+    />
+  );
+};
+```
+
+## 类型定义
+
+```ts
+declare const useEventListener: (
+  eventName: string,
+  listener: (...args: any[]) => void
+) => void;
+```
+
+
+
+---
+url: /reactlynx-use/zh/lifecycles/useLifecycles.md
+---
+
+# useLifecycles
+
+> **致谢：** Re-export from [react-use](https://github.com/streamich/react-use)
+
+React 生命周期 Hook，用于在组件挂载时调用 `mount` 回调，在组件卸载时调用 `unmount` 回调
+
+## 示例
+
+```tsx
+import { useLifecycles } from "@lynx-js/react-use";
+
+const Demo = () => {
+  useLifecycles(
+    () => console.log("MOUNTED"),
+    () => console.log("UNMOUNTED")
+  );
+  return null;
+};
+```
+
+## 类型定义
+
+```ts
+declare const useLifecycles: (mount: any, unmount?: any) => void;
+```
+
+
+---
+url: /reactlynx-use/zh/lifecycles/useMountedState.md
+---
+
+# useMountedState
+
+> **致谢：** Re-export from [react-use](https://github.com/streamich/react-use)
+
+> **注意！**：尽管名称中包含 `State`，但**_此 Hook 不会导致组件重新渲染_**。  
+> 此组件旨在用于避免在已卸载的组件上更新状态。
+
+生命周期 Hook，提供检查组件挂载状态的能力。  
+返回一个函数，如果组件已挂载则返回 `true`，否则返回 `false`。
+
+## 示例
+
+```tsx
+import { useEffect } from "@lynx-js/react";
+import { useMountedState } from "@lynx-js/react-use";
+
+const Demo = () => {
+  const isMounted = useMountedState();
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (isMounted()) {
+        // ...
+      } else {
+        // ...
+      }
+    }, 1000);
+  });
+};
+```
+
+## 类型定义
+
+```ts
+function useMountedState(): () => boolean;
+```
+
+
+---
+url: /reactlynx-use/zh/lifecycles/useUnmount.md
+---
+
+# useUnmount
+
+> **致谢：** Re-export from [react-use](https://github.com/streamich/react-use)
+
+React 生命周期 Hook，在组件即将卸载时调用一个函数。如果你需要同时使用挂载和卸载函数，请使用 `useLifecycles`。
+
+## 示例
+
+```tsx
+import { useUnmount } from "@lynx-js/react-use";
+
+const Demo = () => {
+  useUnmount(() => {
+    console.log("UNMOUNTED");
+  });
+  return null;
+};
+```
+
+## 类型定义
+
+```ts
+declare const useUnmount: (fn: () => any) => void;
+```
+
+
+
+---
+url: /reactlynx-use/zh/lifecycles/useUnmountPromise.md
+---
+
+# useUnmountPromise
+
+> **致谢：** Re-export from [react-use](https://github.com/streamich/react-use)
+
+一个生命周期 Hook，提供一个高阶 Promise，如果组件卸载则该 Promise 不会 resolve。
+
+## 示例
+
+```tsx
+import { useUnmountPromise } from "@lynx-js/react-use";
+
+const Demo = () => {
+  const mounted = useUnmountPromise();
+  useEffect(async () => {
+    await mounted(someFunction()); // Will not resolve if component un-mounts.
+  });
+};
+```
+
+## 类型定义
+
+```ts
+type Race = <P extends Promise<any>, E = any>(
+  promise: P,
+  onError?: (error: E) => void
+) => P;
+
+declare const useUnmountPromise: () => Race;
+```
+
+
+
+---
+url: /reactlynx-use/zh/lifecycles/useUpdateEffect.md
+---
+
+# useUpdateEffect
+
+> **致谢：** Re-export from [react-use](https://github.com/streamich/react-use)
+
+React effect Hook，忽略第一次调用（例如在挂载时）。其签名与 `useEffect` Hook 完全相同。
+
+## 示例
+
+```tsx
+import { useEffect } from "@lynx-js/react";
+import { useUpdateEffect } from "@lynx-js/react-use";
+
+const Demo = () => {
+  const [count, setCount] = React.useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCount((count) => count + 1);
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+
+  useUpdateEffect(() => {
+    console.log("count", count); // will only show 1 and beyond
+
+    return () => {
+      // *OPTIONAL*
+      // do something on unmount
+    };
+  }); // you can include deps array if necessary
+
+  return <view>Count: {count}</view>;
+};
+```
+
+## 类型定义
+
+```ts
+import type { useEffect } from "@lynx-js/react";
+
+declare const useUpdateEffect: typeof useEffect;
+```
+
+
+
+---
+url: /reactlynx-use/zh/mts/README.md
+---
+
+# Main Thread Script (MTS)
+
+_"MTS Hooks"_ unleash the power of Lynx's [Main Thread Script](https://lynxjs.org/next/react/main-thread-script.html).
+
+
+
+---
+url: /reactlynx-use/zh/mts/useMainThreadImperativeHandle.md
+---
+
+# useMainThreadImperativeHandle
+
+主线程版本的 React 的 [useImperativeHandle](https://react.dev/reference/react/useImperativeHandle)，用于在主线程向父组件暴露命令式方法。
+
+## 示例
+
+```tsx
+import { useMainThreadRef } from "@lynx-js/react";
+import type { MainThreadRef } from "@lynx-js/react";
+import { useMainThreadImperativeHandle } from "@lynx-js/react-use";
+
+interface InternalCompMTRef {
+  start: () => void;
+}
+
+function InternalComp({
+  "main-thread:ref": MTRef,
+}: {
+  "main-thread:ref"?: MainThreadRef<InternalCompMTRef | null>;
+}) {
+  function start() {
+    "main thread";
+    console.log("MT Start");
+  }
+
+  useMainThreadImperativeHandle(
+    MTRef,
+    () => {
+      "main thread";
+      return {
+        start: start,
+      };
+    },
+    []
+  );
+
+  return (
+    <view>
+      <text>Internal Comp</text>
+    </view>
+  );
+}
+
+function App() {
+  const internalMTRef = useMainThreadRef<InternalCompMTRef>(null);
+
+  return (
+    <view>
+      <InternalComp main-thread:ref={internalMTRef} />
+      <view
+        main-thread:bindtap={() => {
+          "main thread";
+          internalMTRef.current?.start();
+        }}
+      >
+        <text>Click to Trigger</text>
+      </view>
+    </view>
+  );
+}
+```
+
+## 类型定义
+
+```ts
+import type { MainThreadRef } from "@lynx-js/react";
+
+function useMainThreadImperativeHandle<T, R extends T>(
+  ref: MainThreadRef<T> | undefined,
+  createHandle: () => R,
+  deps: readonly unknown[]
+): void;
+```
+
+
+---
+url: /reactlynx-use/zh/mts/usePointerEvent.md
+---
+
+# usePointerEvent
+
+用于将 [`TouchEvent`](https://lynxjs.org/api/lynx-api/event/touch-event.html) 与 [`MouseEvent`](https://lynxjs.org/api/lynx-api/event/mouse-event.html) 统一为 `PointerEvent` 的 hook，便于跨平台处理指针事件。
+
+## 示例
+
+```tsx
+import { usePointerEvent, CustomPointerEvent, CustomPointerEventMT } from "@lynx-js/react-use";
+
+function App() {
+  const pointerHandlers = usePointerEvent({
+    onPointerDown: (event: CustomPointerEvent) => {
+      console.log("Pointer down", event);
+    },
+    onPointerDownMT: (event: CustomPointerEventMT) => {
+      'main thread'
+      console.log("Pointer down on main thread", event);
+    },
+  });
+
+  return <view {...pointerHandlers}></view>
+}
+
+```
+
+## 类型定义
+
+```tsx
+type PointerAction = 'pointerdown' | 'pointermove' | 'pointerup';
+
+interface CustomPointerEvent {
+    type: PointerAction;
+    pointerType: 'mouse' | 'touch';
+    x: number;
+    y: number;
+    pointerId: number;
+    isPrimary: boolean;
+    pageX?: number;
+    pageY?: number;
+    clientX?: number;
+    clientY?: number;
+    button?: number;
+    buttons?: number;
+    identifier?: number;
+    originalEvent: unknown;
+}
+
+interface CustomPointerEventMT extends CustomPointerEvent {
+    target: MainThread.Element;
+    currentTarget: MainThread.Element;
+    originalEvent: MainThread.MouseEvent | MainThread.TouchEvent;
+}
+
+function usePointerEvent({ onPointerDown, onPointerUp, onPointerMove, onPointerUpMT, onPointerMoveMT, onPointerDownMT, }: {
+    onPointerDown?: (event: CustomPointerEvent) => void;
+    onPointerUp?: (event: CustomPointerEvent) => void;
+    onPointerMove?: (event: CustomPointerEvent) => void;
+    onPointerUpMT?: (event: CustomPointerEventMT) => void;
+    onPointerMoveMT?: (event: CustomPointerEventMT) => void;
+    onPointerDownMT?: (event: CustomPointerEventMT) => void;
+}): {
+    'bindmousedown'?: (e: MouseEvent) => void;
+    'bindtouchstart'?: (e: TouchEvent) => void;
+    'bindmousemove'?: (e: MouseEvent) => void;
+    'bindtouchmove'?: (e: TouchEvent) => void;
+    'bindmouseup'?: (e: MouseEvent) => void;
+    'bindtouchend'?: (e: TouchEvent) => void;
+    'main-thread:bindmousedown'?: (e: MainThread.MouseEvent) => void;
+    'main-thread:bindtouchstart'?: (e: MainThread.TouchEvent) => void;
+    'main-thread:bindmousemove'?: (e: MainThread.MouseEvent) => void;
+    'main-thread:bindtouchmove'?: (e: MainThread.TouchEvent) => void;
+    'main-thread:bindmouseup'?: (e: MainThread.MouseEvent) => void;
+    'main-thread:bindtouchend'?: (e: MainThread.TouchEvent) => void;
+};
+
+```
+
+
+
+---
+url: /reactlynx-use/zh/mts/useTapLock.md
+---
+
+# useTapLock
+
+用于在给定方向中超过指定阈值时锁定 tap 事件的 hook。
+
+## 示例
+
+```tsx
+import { useTapLock } from "@lynx-js/react-use";
+
+function Demo() {
+  const { tapLockRef, handleTouchStart, handleTouchMove, handleTouchEnd } =
+    useTapLock();
+
+  const handleTap = () => {
+    if (tapLockRef.current) {
+      console.log("Tap allowed");
+    } else {
+      console.log("Tap locked due to movement");
+    }
+  };
+
+  return (
+    <view
+      main-thread:bindtouchstart={handleTouchStart}
+      main-thread:bindtouchmove={handleTouchMove}
+      main-thread:bindtouchend={handleTouchEnd}
+      bindtap={handleTap}
+    >
+      Tap me
+    </view>
+  );
+}
+```
+
+## 类型定义
+```ts
+import type { MainThread } from '@lynx-js/types';
+
+type TapLockDirection = 'x' | 'y' | 'both';
+
+interface UseTapLockOptions {
+  /**
+   * Movement threshold in pixels
+   * @default 8
+   */
+  tapThreshold?: number;
+  
+  /**
+   * Direction to monitor
+   * @default 'x'
+   */
+  direction?: TapLockDirection;
+}
+
+function useTapLock(options?: UseTapLockOptions): {
+  tapLockRef: import("@lynx-js/react").MainThreadRef<boolean>;
+  handleTouchStart: (event: MainThread.TouchEvent) => void;
+  handleTouchMove: (event: MainThread.TouchEvent) => boolean;
+  handleTouchEnd: (event: MainThread.TouchEvent) => boolean;
+};
+```
+
+
+---
+url: /reactlynx-use/zh/mts/useTouchEmulation.md
+---
+
+# useTouchEmulation
+
+用于从 [`MouseEvent`](https://lynxjs.org/api/lynx-api/event/mouse-event.html) 合成 [`TouchEvent`](https://lynxjs.org/api/lynx-api/event/touch-event.html) 的 hook，使现有基于触摸的事件处理逻辑可以无缝兼容鼠标输入，便于从仅触摸代码迁移。
+
+## 示例
+
+```tsx
+import { useTouchEmulation } from "@lynx-js/react-use";
+
+function App() {
+  const touchHandlers = useTouchEmulation({
+    onTouchStart: (event: TouchEvent) => {
+      console.log("Touch start", event);
+    },
+    onTouchStartMT: (event: MainThread.TouchEvent) => {
+      'main thread'
+      console.log("Touch start on main thread", event);
+    },
+  });
+
+  return <view {...touchHandlers}></view>
+}
+```
+
+## 类型定义
+
+```tsx
+type TouchAction = 'touchstart' | 'touchmove' | 'touchend';
+
+function useTouchEmulation({
+  onTouchStart,
+  onTouchMove,
+  onTouchEnd,
+  onTouchStartMT,
+  onTouchMoveMT,
+  onTouchEndMT,
+}: {
+  onTouchStart?: (event: TouchEvent) => void;
+  onTouchMove?: (event: TouchEvent) => void;
+  onTouchEnd?: (event: TouchEvent) => void;
+  onTouchStartMT?: (event: MainThread.TouchEvent) => void;
+  onTouchMoveMT?: (event: MainThread.TouchEvent) => void;
+  onTouchEndMT?: (event: MainThread.TouchEvent) => void;
+}): {
+  'bindtouchstart'?: (e: TouchEvent) => void;
+  'bindmousedown'?: (e: MouseEvent) => void;
+  'bindtouchmove'?: (e: TouchEvent) => void;
+  'bindmousemove'?: (e: MouseEvent) => void;
+  'bindtouchend'?: (e: TouchEvent) => void;
+  'bindmouseup'?: (e: MouseEvent) => void;
+  'main-thread:bindtouchstart'?: (e: MainThread.TouchEvent) => void;
+  'main-thread:bindmousedown'?: (e: MainThread.MouseEvent) => void;
+  'main-thread:bindtouchmove'?: (e: MainThread.TouchEvent) => void;
+  'main-thread:bindmousemove'?: (e: MainThread.MouseEvent) => void;
+  'main-thread:bindtouchend'?: (e: MainThread.TouchEvent) => void;
+  'main-thread:bindmouseup'?: (e: MainThread.MouseEvent) => void;
+};
+
+// 别名：useTouchEvent 提供相同的 API
+```
+
+
+
+---
+url: /reactlynx-use/zh/mts/useVelocity.md
+---
+
+# useVelocity
+
+用于跟踪 tap 速度和方向的 hook。
+
+## 示例
+
+```tsx
+import { useVelocity } from "@lynx-js/react-use";
+
+const Demo = () => {
+  const { getVelocity, handleTouchStartMT, handleTouchMoveMT } = useVelocity({
+    smoothingFactor: 0.2,
+    maxTimeDelta: 100,
+    RTL: false,
+  });
+
+  return (
+    <view
+      main-thread:bindtouchstart={handleTouchStartMT}
+      main-thread:bindtouchmovee={handleTouchMoveMT}
+      main-thread:bindtouchend={() => {
+        "main thread";
+        const { velocity, direction } = getVelocity();
+        console.log(`Velocity: ${velocity}px/s, Direction: ${direction}`);
+      }}
+    >
+      <text>Swipe me!</text>
+    </view>
+  );
+};
+```
+
+## 类型定义
+
+```ts
+import type { MainThread } from '@lynx-js/types';
+export type Direction = 'forward' | 'backward' | 'none';
+export interface UseVelocityOptions {
+    RTL?: boolean;
+    smoothingFactor?: number;
+    maxTimeDelta?: number;
+}
+export interface VelocityResult {
+    velocity: number;
+    direction: Direction;
+}
+export interface UseVelocityReturn {
+    getVelocity: () => VelocityResult;
+    handleTouchStartMT: (event: MainThread.TouchEvent) => void;
+    handleTouchMoveMT: (event: MainThread.TouchEvent) => void;
+}
+export default function useVelocity(options?: UseVelocityOptions): UseVelocityReturn;
+```
+
+
+
+---
+url: /reactlynx-use/zh/side-effects/README.md
+---
+
+# Side Effects
+
+> **致谢：** 部分文档基于 [react-use](https://github.com/streamich/react-use/blob/master/docs/Side-effects.md)
+
+_"Side-effect Hooks"_ allow your app trigger various side-effects using browser's API.
+
+
+
+---
+url: /reactlynx-use/zh/side-effects/useDebounce.md
+---
+
+# useDebounce
+
+> **致谢：** Re-export from [react-use](https://github.com/streamich/react-use)
+
+React Hook，延迟调用函数，直到自上次调用防抖函数后经过 wait 毫秒。
+
+第三个参数是防抖依赖的值数组，使用方式与 `useEffect` 相同。当其中一个值发生变化时，防抖超时将重新开始计时。
+
+## 示例
+
+```tsx
+import { useState } from "@lynx-js/react";
+import { useDebounce } from "@lynx-js/react-use";
+
+const Demo = () => {
+  const [state, setState] = useState("Typing stopped");
+  const [val, setVal] = useState("");
+  const [debouncedValue, setDebouncedValue] = useState("");
+
+  const [, cancel] = useDebounce(
+    () => {
+      setState("Typing stopped");
+      setDebouncedValue(val);
+    },
+    2000,
+    [val]
+  );
+
+  return (
+    <view>
+      <input
+        type="text"
+        placeholder="Debounced input"
+        bindinput={({ value }) => {
+          setState("Waiting for typing to stop...");
+          setVal(value);
+        }}
+      />
+      <view>{state}</view>
+      <view>
+        <text>Debounced value: {debouncedValue}</text>
+        <view bindtap={cancel}>Cancel debounce</view>
+      </view>
+    </view>
+  );
+};
+```
+
+## 类型定义
+
+```ts
+type UseDebounceReturn = [() => boolean | null, () => void];
+
+declare function useDebounce(
+  fn: Function,
+  ms?: number,
+  deps?: DependencyList
+): UseDebounceReturn;
+```
+
+
+---
+url: /reactlynx-use/zh/side-effects/useError.md
+---
+
+# useError
+
+> **致谢：** Re-export from [react-use](https://github.com/streamich/react-use)
+
+React 副作用 Hook，返回一个错误分发器。
+
+## 示例
+
+```tsx
+import { useError } from "@lynx-js/react-use";
+
+const Demo = () => {
+  const dispatchError = useError();
+
+  const tapHandler = () => {
+    "background only";
+    dispatchError(new Error("Some error!"));
+  };
+
+  return <view bindtap={tapHandler}>Click me to throw</view>;
+};
+
+// In parent app
+const App = () => (
+  <ErrorBoundary>
+    <Demo />
+  </ErrorBoundary>
+);
+```
+
+## 类型定义
+```ts
+declare const useError: () => (err: Error) => void;
+```
+
+
+---
+url: /reactlynx-use/zh/side-effects/useThrottle.md
+---
+
+# useThrottle
+
+> **致谢：** Re-export from [react-use](https://github.com/streamich/react-use)
+
+React 节流 Hook。
+
+## 示例
+
+```tsx
+import { useState } from "@lynx-js/react";
+import { useThrottle } from "@lynx-js/react-use";
+
+const Demo = ({ value }) => {
+  const throttledValue = useThrottle(value);
+
+  return (
+    <view>
+      <text>Value: {value}</text>
+      <text>Throttled value: {throttledValue}</text>
+    <view/>
+    </view>
+  );
+};
+```
+
+## 类型定义
+
+```ts
+declare const useThrottle: <T>(value: T, ms?: number) => T;
+```
+
+
+---
+url: /reactlynx-use/zh/side-effects/useThrottleFn.md
+---
+
+# useThrottleFn
+
+> **致谢：** Re-export from [react-use](https://github.com/streamich/react-use)
+
+React 节流 Hook。
+
+## 示例
+
+```tsx
+import { useState } from "@lynx-js/react";
+import { useThrottleFn } from "@lynx-js/react-use";
+
+const Demo = ({ value }) => {
+  const throttledValue = useThrottleFn(value => value, 200, [value]);
+
+  return (
+    <view>
+      <text>Value: {value}</text>
+      <text>Throttled value: {throttledValue}</text>
+    <view/>
+    </view>
+  );
+};
+```
+
+## 类型定义
+
+```ts
+declare const useThrottle: <T>(value: T, ms?: number) => T;
+```
+
+
+---
+url: /reactlynx-use/zh/state/README.md
+---
+
+# State
+
+> **致谢：** 部分文档基于 [react-use](https://github.com/streamich/react-use/blob/master/docs/State.md)
+
+*"State Hooks"* allow you to easily manage state of booleans, arrays, and maps.
+
+
+---
+url: /reactlynx-use/zh/state/createMemo.md
+---
+
+# createMemo
+
+> **致谢：** Re-export from [react-use](https://github.com/streamich/react-use)
+
+Hook 工厂函数，接收一个需要被记忆化的函数，返回一个记忆化的 React Hook，该 Hook 接收与原函数相同的参数并返回相同的结果。
+
+## 示例
+
+```tsx
+import { createMemo } from "@lynx-js/react-use";
+
+const fibonacci = (n) => {
+  if (n === 0) return 0;
+  if (n === 1) return 1;
+  return fibonacci(n - 1) + fibonacci(n - 2);
+};
+
+const useMemoFibonacci = createMemo(fibonacci);
+
+const Demo = () => {
+  const result = useMemoFibonacci(10);
+
+  return <view>fib(10) = {result}</view>;
+};
+```
+
+## 类型定义
+
+```ts
+declare function createMemo<T extends (...args: any[]) => any>(
+  fn: T
+): (...args: Parameters<T>) => ReturnType<T>;
+```
+
+
+---
+url: /reactlynx-use/zh/state/useBoolean.md
+---
+
+# useBoolean
+
+> **致谢：** Re-export from [react-use](https://github.com/streamich/react-use)
+
+React 状态 Hook，用于跟踪布尔值。
+
+`useBoolean` 是 `useToggle` 的别名。
+
+## 示例
+
+See [useToggle](./useToggle) for more details.
+
+## 类型定义
+
+```ts
+declare function useBoolean(
+  initialValue: boolean
+): [boolean, (nextValue?: any) => void];
+```
+
+
+---
+url: /reactlynx-use/zh/state/useCounter.md
+---
+
+# useCounter
+
+> **致谢：** Re-export from [react-use](https://github.com/streamich/react-use)
+
+ React 状态 Hook，用于跟踪数字值。
+
+## 示例
+
+```tsx
+import { useCounter, useNumber } from "@lynx-js/react-use";
+
+const Demo = () => {
+  const [min, { inc: incMin, dec: decMin }] = useCounter(1);
+  const [max, { inc: incMax, dec: decMax }] = useCounter(10);
+  const [value, { inc, dec, set, reset }] = useCounter(5, max, min);
+
+  return (
+    <view>
+      <view>
+        <text>
+          current: {value} [min: {min}; max: {max}]
+        </text>
+      </view>
+      <view>
+        <text>Current value: </text>
+        <view bindtap={() => inc()}>Increment</view>
+        <view bindtap={() => dec()}>Decrement</view>
+        <view bindtap={() => inc(5)}>Increment (+5)</view>
+        <view bindtap={() => dec(5)}>Decrement (-5)</view>
+        <view bindtap={() => set(100)}>Set 100</view>
+        <view bindtap={() => reset()}>Reset</view>
+        <view bindtap={() => reset(25)}>Reset (25)</view>
+      </view>
+      <view>
+        <text> Min value:</text>
+        <view bindtap={() => incMin()}>Increment</view>
+        <view bindtap={() => decMin()}>Decrement</view>
+      </view>
+      <view>
+        <text> Max value:</text>
+        <view bindtap={() => incMax()}>Increment</view>
+        <view bindtap={() => decMax()}>Decrement</view>
+      </view>
+    </view>
+  );
+};
+```
+
+## 类型定义
+
+```ts
+declare function useCounter(
+  initialValue?: IHookStateInitAction<number>,
+  max?: number | null,
+  min?: number | null
+): [number, CounterActions];
+```
+
+
+---
+url: /reactlynx-use/zh/state/useDefault.md
+---
+
+# useDefault
+
+> **致谢：** Re-export from [react-use](https://github.com/streamich/react-use)
+
+React 状态 Hook，当状态为 `null` 或 `undefined` 时返回默认值。
+
+## 示例
+
+```tsx
+import { useDefault } from "@lynx-js/react-use";
+
+const Demo = () => {
+  const initialUser = { name: "Marshall" };
+  const defaultUser = { name: "Mathers" };
+  const [user, setUser] = useDefault(defaultUser, initialUser);
+
+  return (
+    <view>
+      <text>User: {user.name}</text>
+      <view bindtap={() => setUser(null)}>set to null</view>
+    </view>
+  );
+};
+```
+
+## 类型定义
+
+```ts
+import { Dispatch, SetStateAction } from "react";
+
+type SetState<T> = Dispatch<SetStateAction<T | null | undefined>>;
+
+type UseDefaultReturn<T> = readonly [T, SetState<T>];
+
+declare function useDefault<T>(
+  defaultValue: T,
+  initialValue: T | (() => T)
+): UseDefaultReturn<T>;
+```
+
+
+---
+url: /reactlynx-use/zh/state/useImmer.md
+---
+
+# useImmer
+
+> **致谢：** 灵感来源于 [use-immer](https://github.com/immerjs/use-immer/tree/master)
+
+使用 [immer](https://github.com/immerjs/immer) 轻松管理复杂的嵌套状态。可以将 `useImmer` 看作是增强版的 `useState`：你可以直接修改状态（例如 `state.count++`），而无需担心不可变性规则。
+
+> 了解更多关于 Immer 的信息: [https://github.com/immerjs/immer](https://github.com/immerjs/immer)
+
+## 用法
+
+`useImmer` 的用法与 `useState` 非常相似，但其更新函数会提供一个可供自由修改的 `draft` 对象。
+
+```tsx
+import { useImmer } from '@lynx-js/react-use';
+
+const JediProfile = () => {
+  const [jedi, updateJedi] = useImmer({
+    alias: 'SkyWalker',
+    stats: {
+      age: 19,
+      midichlorians: 20000,
+    },
+  });
+
+  function updateAlias(alias) {
+    updateJedi((draft) => {
+      draft.alias = alias;
+    });
+  }
+
+  function becomeYounger() {
+    updateJedi((draft) => {
+      draft.stats.age--;
+    });
+  }
+
+  function train() {
+    updateJedi((draft) => {
+      draft.stats.midichlorians += 500;
+    });
+  }
+
+  return (
+    <view>
+      <text>
+        Name: {jedi.alias} (Age: {jedi.stats.age})
+      </text>
+      <text>Power Level: {jedi.stats.midichlorians}</text>
+
+      <input
+        bindinput={(e) => {
+          updateAlias(e.detail.value);
+        }}
+        value={jedi.alias}
+      />
+
+      <view bindtap={becomeYounger}>Rejuvenate</view>
+      <view bindtap={train}>Train Force</view>
+    </view>
+  );
+};
+```
+
+当向更新函数传递一个值而不是函数时，`useImmer` hook 的行为与 `useState` hook 相同，并使用该值更新状态。
+
+```tsx
+const [age, setAge] = useImmer(20);
+
+function birthDay(event) {
+  setAge(age + 1);
+  console.log(`Happy birthday #${age} Anon! hope you good`);
+}
+```
+
+## 类型定义
+
+```ts
+export type DraftFunction<S> = (draft: Draft<S>) => void;
+export type Updater<S> = (arg: S | DraftFunction<S>) => void;
+export type ImmerHook<S> = [S, Updater<S>];
+
+export function useImmer<S>(initialValue: S | (() => S)): ImmerHook<S>;
+```
+
+
+
+---
+url: /reactlynx-use/zh/state/useLatest.md
+---
+
+# useLatest
+
+> **致谢：** Re-export from [react-use](https://github.com/streamich/react-use)
+
+React 状态 Hook，返回最新的状态，如 [React hooks FAQ](https://reactjs.org/docs/hooks-faq.html#why-am-i-seeing-stale-props-or-state-inside-my-function) 中所述。
+
+这主要用于在异步回调中获取某些 props 或 state 的最新值，而不是回调创建时的值。
+
+## 示例
+
+```tsx
+import { useState } from "@lynx-js/react";
+import { useLatest } from "@lynx-js/react-use";
+
+const Demo = () => {
+  const [count, setCount] = useState(0);
+  const latestCount = useLatest(count);
+
+  function handleTap() {
+    setTimeout(() => {
+      console.log(`Latest count value: ${latestCount.current}`);
+    }, 3000);
+  }
+
+  return (
+    <view>
+      <text>You clicked {count} times</text>
+      <view bindtap={() => setCount(count + 1)}>Click me</view>
+      <view bindtap={handleTap}>Show latestCount</view>
+    </view>
+  );
+};
+```
+
+## 类型定义
+
+```ts
+declare const useLatest: <T>(value: T) => {
+  readonly current: T;
+};
+```
+
+
+---
+url: /reactlynx-use/zh/state/useMap.md
+---
+
+# useMap
+
+> **致谢：** Re-export from [react-use](https://github.com/streamich/react-use)
+
+React 状态 Hook，用于跟踪对象的值。
+
+## 示例
+
+```tsx
+import { useMap } from "@lynx-js/react-use";
+
+const Demo = () => {
+  const [map, { set, setAll, remove, reset }] = useMap({
+    hello: "there",
+  });
+
+  return (
+    <view>
+      <view bindtap={() => set(String(Date.now()), new Date().toJSON())}>
+        Add
+      </view>
+      <view bindtap={() => reset()}>Reset</button>
+      <view bindtap={() => setAll({ hello: "new", data: "data" })}>
+        Set new data
+      </view>
+      <view bindtap={() => remove("hello")} disabled={!map.hello}>
+        Remove 'hello'
+      </view>
+      <text>{JSON.stringify(map, null, 2)}</text>
+    </view>
+  );
+};
+```
+
+## 类型定义
+
+```ts
+interface StableActions<T extends object> {
+  set: <K extends keyof T>(key: K, value: T[K]) => void;
+  setAll: (newMap: T) => void;
+  remove: <K extends keyof T>(key: K) => void;
+  reset: () => void;
+}
+interface Actions<T extends object> extends StableActions<T> {
+  get: <K extends keyof T>(key: K) => T[K];
+}
+declare const useMap: <T extends object = any>(
+  initialMap?: T
+) => [T, Actions<T>];
+```
+
+
+---
+url: /reactlynx-use/zh/state/useNumber.md
+---
+
+# useNumber
+
+> **致谢：** Re-export from [react-use](https://github.com/streamich/react-use)
+
+React 状态 Hook，用于跟踪数字值。
+
+`useNumber` 是 `useCounter` 的别名。
+
+## 示例
+
+See [useCounter](./useCounter) for more details.
+
+## 类型定义
+
+```ts
+declare function useNumber(
+  initialValue?: IHookStateInitAction<number>,
+  max?: number | null,
+  min?: number | null
+): [number, CounterActions];
+```
+
+
+---
+url: /reactlynx-use/zh/state/usePrevious.md
+---
+
+# usePrevious
+
+> **致谢：** Re-export from [react-use](https://github.com/streamich/react-use)
+
+React 状态 Hook，返回前一个状态，如 [React hooks FAQ](https://reactjs.org/docs/hooks-faq.html#how-to-get-the-previous-props-or-state) 中所述。
+
+## 示例
+
+```jsx
+import { usePrevious } from "@lynx-js/react-use";
+
+const Demo = () => {
+  const [count, setCount] = React.useState(0);
+  const prevCount = usePrevious(count);
+
+  return (
+    <view>
+      <view bindtap={() => setCount(count + 1)}>+</view>
+      <view bindtap={() => setCount(count - 1)}>-</view>
+      <text>
+        Now: {count}, before: {prevCount}
+      </text>
+    </view>
+  );
+};
+```
+
+## 类型定义
+
+```ts
+declare function usePrevious<T>(state: T): T | undefined;
+```
+
+
+---
+url: /reactlynx-use/zh/state/useQueue.md
+---
+
+# useQueue
+
+> **致谢：** Re-export from [react-use](https://github.com/streamich/react-use)
+
+React 状态 Hook，实现简单的 FIFO（先进先出）队列。
+
+## 示例
+
+```tsx
+import { useQueue } from "@lynx-js/react-use";
+
+const Demo = () => {
+  const { add, remove, first, last, size } = useQueue();
+
+  return (
+    <view>
+      <view>
+        <text>first: {first}</text>
+      </view>
+      <view>
+        <text>last: {last}</text>
+      </view>
+      <view>
+        <text>size: {size}</text>
+      </view>
+      <view bindtap={() => add((last || 0) + 1)}>Add</view>
+      <view bindtap={() => remove()}>Remove</view>
+    </view>
+  );
+};
+```
+
+## 类型定义
+
+```ts
+interface QueueMethods<T> {
+  add: (item: T) => void;
+  remove: () => T;
+  first: T;
+  last: T;
+  size: number;
+}
+declare const useQueue: <T>(initialValue?: T[]) => QueueMethods<T>;
+```
+
+
+---
+url: /reactlynx-use/zh/state/useSet.md
+---
+
+# useSet
+
+> **致谢：** Re-export from [react-use](https://github.com/streamich/react-use)
+
+React 状态 Hook，用于跟踪 [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set)。
+
+## 示例
+
+```tsx
+import { useSet } from "react-use";
+
+const Demo = () => {
+  const [set, { add, has, remove, toggle, reset, clear }] = useSet(
+    new Set(["hello"])
+  );
+
+  return (
+    <view>
+      <view bindtap={() => add(String(Date.now()))}>Add</view>
+      <view bindtap={() => reset()}>Reset</button>
+      <view bindtap={() => clear()}>Clear</button>
+      <view bindtap={() => remove("hello")}>
+        Remove 'hello'
+      </view>
+      <view bindtap={() => toggle("hello")}>Toggle hello</view>
+      <view>{JSON.stringify(Array.from(set), null, 2)}</view>
+    </view>
+  );
+};
+```
+
+## 类型定义
+
+```ts
+interface StableActions<K> {
+  add: (key: K) => void;
+  remove: (key: K) => void;
+  toggle: (key: K) => void;
+  reset: () => void;
+  clear: () => void;
+}
+interface Actions<K> extends StableActions<K> {
+  has: (key: K) => boolean;
+}
+declare const useSet: <K>(initialSet?: Set<K>) => [Set<K>, Actions<K>];
+```
+
+
+---
+url: /reactlynx-use/zh/state/useSetState.md
+---
+
+# useSetState
+
+> **致谢：** Re-export from [react-use](https://github.com/streamich/react-use)
+
+React 状态 Hook，创建一个 `setState` 方法，其工作方式类似于类组件中 `this.setState` 的工作方式——将对象更改合并到当前状态中。
+
+## 示例
+
+```tsx
+import { useSetState } from "@lynx-js/react-use";
+
+const Demo = () => {
+  const [state, setState] = useSetState({});
+
+  return (
+    <view>
+      <view>{JSON.stringify(state, null, 2)}</view>
+      <view bindtap={() => setState({ hello: "world" })}>hello</view>
+      <view bindtap={() => setState({ foo: "bar" })}>foo</view>
+      <view
+        bindtap={() => {
+          setState((prevState) => ({
+            count: (prevState.count || 0) + 1,
+          }));
+        }}
+      >
+        count
+      </view>
+    </view>
+  );
+};
+```
+
+## 类型定义
+
+```ts
+function useSetState<T extends object>(
+  initialState?: T
+): [
+  state: T,
+  setState: (patch: Partial<T> | ((prevState: T) => Partial<T>)) => void
+];
+```
+
+
+---
+url: /reactlynx-use/zh/state/useToggle.md
+---
+
+# useToggle
+
+> **致谢：** Re-export from [react-use](https://github.com/streamich/react-use)
+
+React 状态 Hook，用于跟踪布尔值。
+
+## 示例
+
+```tsx
+import { useToggle } from "@lynx-js/react-use";
+
+const Demo = () => {
+  const [on, toggle] = useToggle(true);
+
+  return (
+    <view>
+      <view>{on ? "ON" : "OFF"}</view>
+      <view bindtap={toggle}>Toggle</view>
+      <view bindtap={() => toggle(true)}>set ON</view>
+      <view bindtap={() => toggle(false)}>set OFF</view>
+    </view>
+  );
+};
+```
+
+## 类型定义
+
+```ts
+declare function useToggle(
+  initialValue: boolean
+): [boolean, (nextValue?: any) => void];
+```
+
+
+---
+url: /reactlynx-use/zh/state/useUniqueId.md
+---
+
+# useUniqueId
+
+React 状态 Hook，用于生成唯一 ID。该 ID 在组件重渲染期间保持不变。
+
+## 示例
+
+```tsx
+import { useUniqueId } from "@lynx-js/react-use";
+
+const Demo = () => {
+  const id = useUniqueId("prefix-");
+  // id 类似于 "prefix-V1StGXR8_Z5jdHi6B-myT"
+  return <view id={id}>Content</view>;
+};
+```
+
+## 为什么选择 nanoid？
+
+本 Hook 使用 [nanoid](https://github.com/ai/nanoid) 生成 ID。
+
+> Nano ID 是一个用于生成随机 ID 的库。与 UUID 一样，它也有重复 ID 的概率。然而，这个概率非常小。
+> 需要约 1490 亿年或 1,307,660T 个 ID，才会有 1% 的概率发生至少一次碰撞。
+
+## 类型定义
+
+```ts
+declare const useUniqueId: (prefix?: string) => string;
+```
+
+
+
+---
+url: /reactlynx-use/zh/contributing.md
+---
+
+
+import ContributingZh from '/CONTRIBUTING.zh-CN.md';
+
+<ContributingZh components={{ h1: () => null }} />
+
+
+
+---
+url: /reactlynx-use/zh/guide.md
+---
+
+
+本页面已被新的概览页替代：[/zh/overview](/zh/overview)。
+
+
+
+---
+url: /reactlynx-use/zh/index.md
+---
+
+
+
+
+---
+url: /reactlynx-use/zh/overview.md
+---
+
+
+这个页面会根据侧边栏自动生成目录。在 `docs/zh` 下新增 `.md` 文件后，会自动出现在这里。
+
+

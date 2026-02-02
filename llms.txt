@@ -1,0 +1,54 @@
+# ReactLynxUse v0.1.3
+
+> A React-style hooks library designed specifically for ReactLynx
+
+## Guide
+
+- [Events](/reactlynx-use/events/README.md): "Events Hooks" provide powerful abstractions for handling Lynx events.
+- [useEventListener](/reactlynx-use/events/useEventListener.md): A hook that helps you add a global event listener as early as possible.
+- [useExposureForNode](/reactlynx-use/events/useExposureForNode.md): Node-level exposure hook with optional admission gating.
+- [useExposureForPage](/reactlynx-use/events/useExposureForPage.md): Page-level exposure hook that consumes GlobalEventEmitter events and manages multiple items with admission gating.
+- [useStayTime](/reactlynx-use/events/useStayTime.md): Track how long an element stays visible, with optional manual control.
+- [Lifecycle](/reactlynx-use/lifecycles/README.md): Credit: Documentation based on react-use "Lifecycle Hooks" modify and extend built-in React hooks or imitate React Class component lifecycle patterns.
+- [useEffectOnce](/reactlynx-use/lifecycles/useEffectOnce.md): Credit: Re-export from react-use React lifecycle hook that runs an effect only once.
+- [useLifecycles](/reactlynx-use/lifecycles/useLifecycles.md): Credit: Re-export from react-use React lifecycle hook that call mount and unmount callbacks, when component is mounted and un-mounted, respectively.
+- [useMountedState](/reactlynx-use/lifecycles/useMountedState.md): Credit: Re-export from react-use NOTE!: despite having State in its name this hook does not cause component re-render.This component designed to be used to avoid state updates on unmounted components. Lifecycle hook providing ability to check component's mount state.Returns a function that will return true if component mounted and false otherwise.
+- [useUnmount](/reactlynx-use/lifecycles/useUnmount.md): Credit: Re-export from react-use React lifecycle hook that calls a function when the component will unmount. Use useLifecycles if you need both a mount and unmount function.
+- [useUnmountPromise](/reactlynx-use/lifecycles/useUnmountPromise.md): Credit: Re-export from react-use A life-cycle hook that provides a higher order promise that does not resolve if component un-mounts.
+- [useUpdateEffect](/reactlynx-use/lifecycles/useUpdateEffect.md): Credit: Re-export from react-use React effect hook that ignores the first invocation (e.g. on mount). The signature is exactly the same as the useEffect hook.
+- [Main Thread Script (MTS)](/reactlynx-use/mts/README.md): "MTS Hooks" unleash the power of Lynx's Main Thread Script.
+- [useMainThreadImperativeHandle](/reactlynx-use/mts/useMainThreadImperativeHandle.md): A Hook for exposing imperative handles to parent components on the main-thread. This is the main-thread version of
+React's useImperativeHandle, allowing you to trigger component methods that run on the main-thread.
+- [usePointerEvent](/reactlynx-use/mts/usePointerEvent.md): A Hook unifies TouchEvent and MouseEvent into PointerEvent, to help with handling pointer events in a cross-platform manner.
+- [useTapLock](/reactlynx-use/mts/useTapLock.md): A Hook for locking tap events when tap movement exceeds a specified threshold in a given direction.
+- [useTouchEmulation](/reactlynx-use/mts/useTouchEmulation.md): A Hook synthesizes TouchEvent from MouseEvent, so existing touch handlers can work seamlessly with mouse input. Useful for migration from touch-only code.
+- [useVelocity](/reactlynx-use/mts/useVelocity.md): A hook that tracks touch velocity and direction with smoothing support.
+- [Side Effects](/reactlynx-use/side-effects/README.md): Credit: Documentation based on react-use "Side-effect Hooks" allow your app trigger various side-effects using browser's API.
+- [useDebounce](/reactlynx-use/side-effects/useDebounce.md): Credit: Re-export from react-use React hook that delays invoking a function until after wait milliseconds have elapsed since the last time the debounced function was invoked. The third argument is the array of values that the debounce depends on, in the same manner as useEffect. The debounce timeout will start when one of the values changes.
+- [useError](/reactlynx-use/side-effects/useError.md): Credit: Re-export from react-use React side-effect hook that returns an error dispatcher.
+- [useThrottle](/reactlynx-use/side-effects/useThrottle.md): Credit: Re-export from react-use React hooks that throttle.
+- [useThrottleFn](/reactlynx-use/side-effects/useThrottleFn.md): Credit: Re-export from react-use React hooks that throttle.
+- [State](/reactlynx-use/state/README.md): Credit: Documentation based on react-use "State Hooks" allow you to easily manage state of booleans, arrays, and maps.
+- [createMemo](/reactlynx-use/state/createMemo.md): Credit: Re-export from react-use Hook factory, receives a function to be memoized, returns a memoized React hook, which receives the same arguments and returns the same result as the original function.
+- [useBoolean](/reactlynx-use/state/useBoolean.md): Credit: Re-export from react-use React state hook that tracks value of a boolean. useBoolean is an alias for useToggle.
+- [useCounter](/reactlynx-use/state/useCounter.md): Credit: Re-export from react-use React state hook that tracks a numeric value.
+- [useDefault](/reactlynx-use/state/useDefault.md): Credit: Re-export from react-use React state hook that returns the default value when state is null or undefined.
+- [useImmer](/reactlynx-use/state/useImmer.md): Credit: Inspired by use-immer Manage complex nested state with ease using immer. Think of useImmer as useState but supercharged: you can modify state directly (like state.count++) without worrying about immutability rules. Learn more about Immer: https://github.com/immerjs/immer
+- [useLatest](/reactlynx-use/state/useLatest.md): Credit: Re-export from react-use React state hook that returns the latest state as described in the React hooks FAQ. This is mostly useful to get access to the latest value of some props or state inside an asynchronous callback, instead of that value at the time the callback was created from.
+- [useMap](/reactlynx-use/state/useMap.md): Credit: Re-export from react-use React state hook that tracks a value of an object.
+- [useNumber](/reactlynx-use/state/useNumber.md): Credit: Re-export from react-use React state hook that tracks a numeric value. useNumber is an alias for useCounter.
+- [usePrevious](/reactlynx-use/state/usePrevious.md): Credit: Re-export from react-use React state hook that returns the previous state as described in the React hooks FAQ.
+- [useQueue](/reactlynx-use/state/useQueue.md): Credit: Re-export from react-use React state hook implements simple FIFO queue.
+- [useSet](/reactlynx-use/state/useSet.md): Credit: Re-export from react-use React state hook that tracks a Set.
+- [useSetState](/reactlynx-use/state/useSetState.md): Credit: Re-export from react-use React state hook that creates setState method which works similar to how this.setState works in class components—it merges object changes into current state.
+- [useToggle](/reactlynx-use/state/useToggle.md): Credit: Re-export from react-use React state hook that tracks value of a boolean.
+- [useUniqueId](/reactlynx-use/state/useUniqueId.md): React hook that generates a unique ID. The ID is stable across re-renders.
+
+## Contributing
+
+- [Contributing](/reactlynx-use/contributing.md)
+
+## Other
+
+- [Guide](/reactlynx-use/guide.md)
+- [Overview](/reactlynx-use/overview.md)

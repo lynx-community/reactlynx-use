@@ -1,0 +1,53 @@
+# ReactLynxUse v0.1.3
+
+> A React-style hooks library designed specifically for ReactLynx
+
+## 指南
+
+- [Events](/reactlynx-use/zh/events/README.md): "Events Hooks" provide powerful abstractions for handling Lynx events.
+- [useExposureForNode](/reactlynx-use/zh/events/useExposureForNode.md): 节点级曝光 Hook，可选曝光准入等待。
+- [useExposureForPage](/reactlynx-use/zh/events/useExposureForPage.md): 页面级曝光 Hook，监听 GlobalEventEmitter 的曝光/反曝光事件并支持准入等待。
+- [useStayTime](/reactlynx-use/zh/events/useStayTime.md): 用于统计元素可见时长的 Hook，支持手动控制。
+- [Lifecycle](/reactlynx-use/zh/lifecycles/README.md): 致谢： 部分文档基于 react-use "Lifecycle Hooks" modify and extend built-in React hooks or imitate React Class component lifecycle patterns.
+- [useEffectOnce](/reactlynx-use/zh/lifecycles/useEffectOnce.md): 致谢： Re-export from react-use 仅运行一次的 useEffect
+- [useEventListener](/reactlynx-use/zh/lifecycles/useEventListener.md): 用于尽早添加全局事件监听器的 Hook。
+- [useLifecycles](/reactlynx-use/zh/lifecycles/useLifecycles.md): 致谢： Re-export from react-use React 生命周期 Hook，用于在组件挂载时调用 mount 回调，在组件卸载时调用 unmount 回调
+- [useMountedState](/reactlynx-use/zh/lifecycles/useMountedState.md): 致谢： Re-export from react-use 注意！：尽管名称中包含 State，但此 Hook 不会导致组件重新渲染。此组件旨在用于避免在已卸载的组件上更新状态。 生命周期 Hook，提供检查组件挂载状态的能力。返回一个函数，如果组件已挂载则返回 true，否则返回 false。
+- [useUnmount](/reactlynx-use/zh/lifecycles/useUnmount.md): 致谢： Re-export from react-use React 生命周期 Hook，在组件即将卸载时调用一个函数。如果你需要同时使用挂载和卸载函数，请使用 useLifecycles。
+- [useUnmountPromise](/reactlynx-use/zh/lifecycles/useUnmountPromise.md): 致谢： Re-export from react-use 一个生命周期 Hook，提供一个高阶 Promise，如果组件卸载则该 Promise 不会 resolve。
+- [useUpdateEffect](/reactlynx-use/zh/lifecycles/useUpdateEffect.md): 致谢： Re-export from react-use React effect Hook，忽略第一次调用（例如在挂载时）。其签名与 useEffect Hook 完全相同。
+- [Main Thread Script (MTS)](/reactlynx-use/zh/mts/README.md): "MTS Hooks" unleash the power of Lynx's Main Thread Script.
+- [useMainThreadImperativeHandle](/reactlynx-use/zh/mts/useMainThreadImperativeHandle.md): 主线程版本的 React 的 useImperativeHandle，用于在主线程向父组件暴露命令式方法。
+- [usePointerEvent](/reactlynx-use/zh/mts/usePointerEvent.md): 用于将 TouchEvent 与 MouseEvent 统一为 PointerEvent 的 hook，便于跨平台处理指针事件。
+- [useTapLock](/reactlynx-use/zh/mts/useTapLock.md): 用于在给定方向中超过指定阈值时锁定 tap 事件的 hook。
+- [useTouchEmulation](/reactlynx-use/zh/mts/useTouchEmulation.md): 用于从 MouseEvent 合成 TouchEvent 的 hook，使现有基于触摸的事件处理逻辑可以无缝兼容鼠标输入，便于从仅触摸代码迁移。
+- [useVelocity](/reactlynx-use/zh/mts/useVelocity.md): 用于跟踪 tap 速度和方向的 hook。
+- [Side Effects](/reactlynx-use/zh/side-effects/README.md): 致谢： 部分文档基于 react-use "Side-effect Hooks" allow your app trigger various side-effects using browser's API.
+- [useDebounce](/reactlynx-use/zh/side-effects/useDebounce.md): 致谢： Re-export from react-use React Hook，延迟调用函数，直到自上次调用防抖函数后经过 wait 毫秒。 第三个参数是防抖依赖的值数组，使用方式与 useEffect 相同。当其中一个值发生变化时，防抖超时将重新开始计时。
+- [useError](/reactlynx-use/zh/side-effects/useError.md): 致谢： Re-export from react-use React 副作用 Hook，返回一个错误分发器。
+- [useThrottle](/reactlynx-use/zh/side-effects/useThrottle.md): 致谢： Re-export from react-use React 节流 Hook。
+- [useThrottleFn](/reactlynx-use/zh/side-effects/useThrottleFn.md): 致谢： Re-export from react-use React 节流 Hook。
+- [State](/reactlynx-use/zh/state/README.md): 致谢： 部分文档基于 react-use "State Hooks" allow you to easily manage state of booleans, arrays, and maps.
+- [createMemo](/reactlynx-use/zh/state/createMemo.md): 致谢： Re-export from react-use Hook 工厂函数，接收一个需要被记忆化的函数，返回一个记忆化的 React Hook，该 Hook 接收与原函数相同的参数并返回相同的结果。
+- [useBoolean](/reactlynx-use/zh/state/useBoolean.md): 致谢： Re-export from react-use React 状态 Hook，用于跟踪布尔值。 useBoolean 是 useToggle 的别名。
+- [useCounter](/reactlynx-use/zh/state/useCounter.md): 致谢： Re-export from react-use React 状态 Hook，用于跟踪数字值。
+- [useDefault](/reactlynx-use/zh/state/useDefault.md): 致谢： Re-export from react-use React 状态 Hook，当状态为 null 或 undefined 时返回默认值。
+- [useImmer](/reactlynx-use/zh/state/useImmer.md): 致谢： 灵感来源于 use-immer 使用 immer 轻松管理复杂的嵌套状态。可以将 useImmer 看作是增强版的 useState：你可以直接修改状态（例如 state.count++），而无需担心不可变性规则。 了解更多关于 Immer 的信息: https://github.com/immerjs/immer
+- [useLatest](/reactlynx-use/zh/state/useLatest.md): 致谢： Re-export from react-use React 状态 Hook，返回最新的状态，如 React hooks FAQ 中所述。 这主要用于在异步回调中获取某些 props 或 state 的最新值，而不是回调创建时的值。
+- [useMap](/reactlynx-use/zh/state/useMap.md): 致谢： Re-export from react-use React 状态 Hook，用于跟踪对象的值。
+- [useNumber](/reactlynx-use/zh/state/useNumber.md): 致谢： Re-export from react-use React 状态 Hook，用于跟踪数字值。 useNumber 是 useCounter 的别名。
+- [usePrevious](/reactlynx-use/zh/state/usePrevious.md): 致谢： Re-export from react-use React 状态 Hook，返回前一个状态，如 React hooks FAQ 中所述。
+- [useQueue](/reactlynx-use/zh/state/useQueue.md): 致谢： Re-export from react-use React 状态 Hook，实现简单的 FIFO（先进先出）队列。
+- [useSet](/reactlynx-use/zh/state/useSet.md): 致谢： Re-export from react-use React 状态 Hook，用于跟踪 Set。
+- [useSetState](/reactlynx-use/zh/state/useSetState.md): 致谢： Re-export from react-use React 状态 Hook，创建一个 setState 方法，其工作方式类似于类组件中 this.setState 的工作方式——将对象更改合并到当前状态中。
+- [useToggle](/reactlynx-use/zh/state/useToggle.md): 致谢： Re-export from react-use React 状态 Hook，用于跟踪布尔值。
+- [useUniqueId](/reactlynx-use/zh/state/useUniqueId.md): React 状态 Hook，用于生成唯一 ID。该 ID 在组件重渲染期间保持不变。
+
+## 贡献指南
+
+- [贡献指南](/reactlynx-use/zh/contributing.md)
+
+## Other
+
+- [指南](/reactlynx-use/zh/guide.md)
+- [概览](/reactlynx-use/zh/overview.md)
