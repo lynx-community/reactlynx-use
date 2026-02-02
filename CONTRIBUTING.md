@@ -30,11 +30,10 @@ pnpm test
 
 ### Docs
 
-The documentation site is powered by [rspress](https://rspress.rs/)
+The documentation site is powered by [Rspress 2](https://rspress.rs/)
 
 ```bash
-cd website
-pnpm dev
+pnpm docs:dev
 ```
 
 ## Contributing

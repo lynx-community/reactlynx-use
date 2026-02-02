@@ -4,5 +4,4 @@ overview: true
 overviewHeaders: [2]
 ---
 
-This page is auto-generated from the docs sidebar. Add a new `.md` file under [docs/en](file:///Users/bytedance/bd-workspace/reactlynx-use/docs/en) and it will appear here automatically.
-
+This page is auto-generated from the docs sidebar. Add a new `.md` file under `docs/en` and it will appear here automatically.
