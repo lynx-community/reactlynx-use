@@ -16,14 +16,16 @@ function Demo() {
   });
 
   return (
-    <view
-      ref={boxRef}
-      style={{
-        width: 200,
-        height: 200,
-        background: "red",
-      }}
-    />
+    <page trigger-global-event={true}>
+      <view
+        ref={boxRef}
+        style={{
+          width: 200,
+          height: 200,
+          background: "red",
+        }}
+      />
+    </page>
   );
 }
 ```
@@ -33,21 +35,22 @@ function Demo() {
 ```ts
 type TapAwayEvent = {
   target?: unknown;
-  detail?: { target?: unknown };
 };
 
 function useTapAway<E extends TapAwayEvent = TapAwayEvent>(
   ref: RefObject<unknown> | Array<RefObject<unknown>>,
   onTapAway: (event: E) => void,
-  events?: string[], // 默认 ['bindtap']
+  eventName?: "tap", // 默认 "tap"
 ): void;
 ```
 
 ### 参数
 - `ref`：目标元素的 ref，支持单个或数组。
 - `onTapAway`：当 tap 发生在所有 ref 外部时调用。
-- `events`：可选，自定义监听的事件名数组，默认 `['bindtap']`。
+- `eventName`：可选，默认 `"tap"`。
 
 ### 说明
 - 运行在后台线程，通过 `GlobalEventEmitter` 监听 tap 事件。
-- 命中判定支持 `contains`/节点相等/`uid`（或 `dataset.uid`/`id`） 比对。***
+- 命中判定仅基于 `event.target`，支持节点相等/`uid` 比对，并在需要时使用路径后缀匹配兜底。
+- 请确保页面根节点设置了 `trigger-global-event={true}` 以转发 tap 事件到 `GlobalEventEmitter`。
+- `useTapAway` 目前只监听 `tap`。

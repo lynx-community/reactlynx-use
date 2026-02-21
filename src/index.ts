@@ -31,6 +31,8 @@ export { default as useIntersection } from './useIntersection.js';
 export { default as useMainThreadImperativeHandle } from './useMainThreadImperativeHandle.js';
 export type { CustomPointerEvent, CustomPointerEventMT } from './usePointerEvent.js';
 export { default as usePointerEvent } from './usePointerEvent.js';
+export type { TapAwayEvent } from './useTapAway.js';
+export { default as useTapAway } from './useTapAway.js';
 export type { TapLockDirection, UseTapLockOptions } from './useTapLock.js';
 export { default as useTapLock } from './useTapLock.js';
 export type { UseTimeoutReturn } from './useTimeout.js';
