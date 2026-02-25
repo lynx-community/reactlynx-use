@@ -1,5 +1,15 @@
 # @lynx-js/react-use
 
+## 0.2.0
+
+### Minor Changes
+
+- 4469196: integrate rspress
+
+### Patch Changes
+
+- eda7116: docs: added useImmer entry in README.md
+
 ## 0.1.3
 
 ### Patch Changes
