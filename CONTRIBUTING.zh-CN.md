@@ -30,11 +30,10 @@ pnpm test
 
 ## 文档
 
-文档站点由 [rspress](https://rspress.rs/) 驱动
+文档站点由 [Rspress 2](https://rspress.rs/) 驱动
 
 ```bash
-cd website
-pnpm dev
+pnpm docs:dev
 ```
 
 ## 贡献

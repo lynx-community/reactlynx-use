@@ -12,6 +12,8 @@ storybook-static
 .vscode/*
 !.vscode/extensions.json
 .idea
+.trae
 
 # Rspress
 doc_build
+.rspress
