@@ -21,5 +21,5 @@ features:
     icon: ⚛️
   - title: '跨平台特性'
     details: 基于 Lynx 跨平台特性精心设计
-    icon: 🔧
+    icon: ♻️
 ---
