@@ -21,6 +21,9 @@ import {
   useExposureForPage as _useExposureForPage,
   useStayTime as _useStayTime,
 } from "./exposureBased/index.js";
+import {
+  useListScrollEvent as _useListScrollEvent,
+} from "./list/useListScrollEvent.js";
 import { default as _useCounter, default as _useNumber } from "./useCounter.js";
 import { default as _useThrottle } from "./useThrottle.js";
 import { default as _useUnmount } from "./useUnmount.js";
@@ -50,4 +53,5 @@ export const useUnmountPromise = factory(_useUnmountPromise);
 export const useUpdateEffect = factory(_useUpdateEffect);
 export const useExposureForNode = factory(_useExposureForNode);
 export const useExposureForPage = factory(_useExposureForPage);
+export const useListScrollEvent = factory(_useListScrollEvent);
 export const useStayTime = factory(_useStayTime);
