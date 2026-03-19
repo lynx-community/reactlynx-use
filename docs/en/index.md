@@ -21,5 +21,5 @@ features:
     icon: ⚛️
   - title: 'Cross-Platform'
     details: Built with Lynx's unique cross-platform capabilities in mind
-    icon: �
+    icon: ♻️
 ---
