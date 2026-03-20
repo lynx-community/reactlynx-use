@@ -50,4 +50,6 @@
 ## Other
 
 - [指南](/reactlynx-use/zh/guide.md)
+- [List](/reactlynx-use/zh/list/README.md): "List Hooks" provide powerful abstractions for handling Lynx list events
+- [useListScrollEvent](/reactlynx-use/zh/list/useListScrollEvent.md): List 滚动事件处理 Hook，支持过滤非用户触发的滚动事件。
 - [概览](/reactlynx-use/zh/overview.md)

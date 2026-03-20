@@ -51,4 +51,6 @@ React's useImperativeHandle, allowing you to trigger component methods that run 
 ## Other
 
 - [Guide](/reactlynx-use/guide.md)
+- [List](/reactlynx-use/list/README.md): "List Hooks" provide powerful abstractions for handling Lynx list events
+- [useListScrollEvent](/reactlynx-use/list/useListScrollEvent.md): A Hook for handling List scroll events, with support for filtering non-user-triggered scroll events.
 - [Overview](/reactlynx-use/overview.md)
