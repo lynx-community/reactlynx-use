@@ -74,6 +74,10 @@
   - [`useStayTime`](./docs/en/events/useStayTime.md) &mdash; Track how long an element stays visible, with optional manual control.
     <br/>
     <br/>
+- [**List**](./docs/en/list/README.md)
+  - [`useListScrollEvent`](./docs/en/list/useListScrollEvent.md) &mdash; a Hook for handling `List` scroll events, with support for filtering non-user-triggered scroll events.
+    <br/>
+    <br/>
 - [**Lifecycles**](./docs/en/lifecycles/README.md)
   - [`useEffectOnce`](./docs/en/lifecycles/useEffectOnce.md) &mdash; a modified [`useEffect`](https://reactjs.org/docs/hooks-reference.html#useeffect) hook that only runs once.
   - [`useLifecycles`](./docs/en/lifecycles/useLifecycles.md) &mdash; calls `mount` and `unmount` callbacks.

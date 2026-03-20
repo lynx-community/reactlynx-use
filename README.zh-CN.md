@@ -74,6 +74,10 @@
   - [`useStayTime`](./docs/zh/events/useStayTime.md) &mdash; 用于统计元素可见时长的 hook，支持手动控制。
     <br/>
     <br/>
+- [**列表**](./docs/zh/list/README.md)
+  - [`useListScrollEvent`](./docs/zh/list/useListScrollEvent.md) &mdash; 用于处理列表滚动事件的 hook，支持过滤用户触发的滚动事件。
+    <br/>
+    <br/>
 - [**生命周期**](./docs/zh/lifecycles/README.md)
   - [`useEffectOnce`](./docs/zh/lifecycles/useEffectOnce.md) &mdash; 仅运行一次的 [`useEffect`](https://reactjs.org/docs/hooks-reference.html#useeffect)。
   - [`useLifecycles`](./docs/zh/lifecycles/useLifecycles.md) &mdash; 调用 `mount` 和 `unmount` 回调。
