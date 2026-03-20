@@ -1,5 +1,17 @@
 # @lynx-js/react-use
 
+## 0.2.0
+
+### Minor Changes
+
+- 4469196: integrate rspress
+
+### Patch Changes
+
+- df945b9: Add useListScrollEvent hook for handling list scroll events.
+- eda7116: docs: added useImmer entry in README.md
+- 648face: fixed home icon entry
+
 ## 0.1.3
 
 ### Patch Changes
