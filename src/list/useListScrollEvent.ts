@@ -5,16 +5,20 @@ import {
   useRef,
 } from "@lynx-js/react";
 import type { ListScrollEvent, ListScrollToLowerEvent, ListScrollToUpperEvent } from "@lynx-js/types";
-import type { IUseListScrollEventOptions, IUseListScrollEventReturn, ListScrollAttrBag } from "./types.js";
+import type { IUseListScrollEventHandlers, IUseListScrollEventOptions, IUseListScrollEventReturn, ListScrollEventAttrsBag } from "./types.js";
 
-export function useListScrollEvent<
-  EA extends Record<string, string | number | boolean | undefined>
->(
-  options: IUseListScrollEventOptions<EA>
-): IUseListScrollEventReturn<EA> {
-  const { attrs, filterScrollToLowerEventWithEventSource = true, 
-    filterScrollToUpperEventWithEventSource = true, 
-    onScroll, onScrollToLower, onScrollToUpper } = options;
+export function useListScrollEvent(
+  handlers: IUseListScrollEventHandlers = {} as IUseListScrollEventHandlers,
+  options?: IUseListScrollEventOptions
+): IUseListScrollEventReturn {
+  const { onScroll, onScrollToLower, onScrollToUpper } = handlers;
+  const {
+    filterScrollToLowerEventWithEventSource = true,
+    filterScrollToUpperEventWithEventSource = true,
+    scrollEventThrottle,
+    upperThresholdItemCount,
+    lowerThresholdItemCount,
+  } = options ?? {};
 
   // Keep latest callbacks to avoid re-creating gate or handlers
   const onScrollRef = useRef(onScroll);
@@ -56,8 +60,18 @@ export function useListScrollEvent<
   }, [filterScrollToUpperEventWithEventSource]);
 
   const listScrollEventsAndAttrs = useMemo(() => {
-    const baseAttrs = (attrs ?? {}) as ListScrollAttrBag & EA;
-    const props = { ...baseAttrs } as IUseListScrollEventReturn<EA>['listScrollEventsAndAttrs'];
+    const listAttrs: ListScrollEventAttrsBag = {};
+    if (typeof scrollEventThrottle === "number") {
+      listAttrs["scroll-event-throttle"] = scrollEventThrottle;
+    }
+    if (typeof upperThresholdItemCount === "number") {
+      listAttrs["upper-threshold-item-count"] = upperThresholdItemCount;
+    }
+    if (typeof lowerThresholdItemCount === "number") {
+      listAttrs["lower-threshold-item-count"] = lowerThresholdItemCount;
+    }
+
+    const props = { ...listAttrs } as IUseListScrollEventReturn["listScrollEventsAndAttrs"];
     if (onScroll) {
       props.bindscroll = handleScroll;
     }
@@ -74,8 +88,15 @@ export function useListScrollEvent<
     // If omitted, useMemo wouldn't detect changes when the parent component dynamically
     // passes or removes event handlers later, leading to stale event bindings.
   [
-    attrs, onScroll, onScrollToLower, onScrollToUpper, 
-    handleScroll, handleScrollToLower, handleScrollToUpper
+    scrollEventThrottle,
+    upperThresholdItemCount,
+    lowerThresholdItemCount,
+    onScroll,
+    onScrollToLower,
+    onScrollToUpper,
+    handleScroll,
+    handleScrollToLower,
+    handleScrollToUpper,
   ]);
 
   return { listScrollEventsAndAttrs };
