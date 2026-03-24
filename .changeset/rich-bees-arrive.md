@@ -2,4 +2,4 @@
 "@lynx-js/react-use": minor
 ---
 
-integrate rspress
+docs: integrate Rspress

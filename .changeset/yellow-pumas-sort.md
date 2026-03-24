@@ -2,4 +2,4 @@
 "@lynx-js/react-use": patch
 ---
 
-fixed home icon entry
+docs: fixed home icon entry

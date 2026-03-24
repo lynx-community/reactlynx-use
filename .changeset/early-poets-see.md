@@ -2,4 +2,4 @@
 "@lynx-js/react-use": patch
 ---
 
-opt parameters of useListScrollEvent
+Opt parameters of `useListScrollEvent`
