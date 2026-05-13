@@ -10,6 +10,127 @@ import usePointerEvent, {
 } from '../src/usePointerEvent';
 
 describe('usePointerEvent (BT) integration', () => {
+  it('maps catch handlers separately from bind handlers', () => {
+    const catchPointerDown = vi.fn();
+    const catchPointerMove = vi.fn();
+    const catchPointerUp = vi.fn();
+    const catchPointerCancel = vi.fn();
+    let lastProps: ReturnType<typeof usePointerEvent> | undefined;
+    const Comp = () => {
+      lastProps = usePointerEvent({
+        onPointerDown: vi.fn(),
+        catchPointerDown,
+        catchPointerMove,
+        catchPointerUp,
+        catchPointerCancel,
+      });
+      return <view {...lastProps}></view>;
+    };
+    render(<Comp />);
+
+    expect(lastProps?.bindmousedown).toBeDefined();
+    expect(lastProps?.catchmousemove).toBeDefined();
+    expect(lastProps?.bindmousemove).toBeUndefined();
+
+    lastProps?.catchmousedown?.({
+      x: 10,
+      y: 20,
+      pageX: 110,
+      pageY: 120,
+      clientX: 210,
+      clientY: 220,
+      button: 1,
+      buttons: 3,
+    } as Parameters<NonNullable<typeof lastProps.catchmousedown>>[0]);
+    lastProps?.catchmousemove?.({
+      x: 11,
+      y: 21,
+      pageX: 111,
+      pageY: 121,
+    } as Parameters<NonNullable<typeof lastProps.catchmousemove>>[0]);
+    lastProps?.catchmouseup?.({
+      x: 12,
+      y: 22,
+      pageX: 112,
+      pageY: 122,
+    } as Parameters<NonNullable<typeof lastProps.catchmouseup>>[0]);
+    lastProps?.catchtouchcancel?.({
+      touches: [],
+      changedTouches: [{
+        identifier: 4,
+        pageX: 113,
+        pageY: 123,
+        clientX: 213,
+        clientY: 223,
+      }],
+    } as unknown as Parameters<NonNullable<typeof lastProps.catchtouchcancel>>[0]);
+
+    expect(catchPointerDown).toHaveBeenCalledTimes(1);
+    expect(catchPointerMove).toHaveBeenCalledTimes(1);
+    expect(catchPointerUp).toHaveBeenCalledTimes(1);
+    expect(catchPointerCancel).toHaveBeenCalledTimes(1);
+    expect(catchPointerDown.mock.calls[0][0]).toMatchObject({
+      type: 'pointerdown',
+      pointerType: 'mouse',
+      button: 0,
+      buttons: 3,
+      x: 10,
+    });
+    expect(catchPointerCancel.mock.calls[0][0]).toMatchObject({
+      type: 'pointercancel',
+      pointerType: 'touch',
+      pointerId: 4,
+    });
+  });
+
+  it('maps capture handlers separately from bind and catch handlers', () => {
+    const captureBindPointerDown = vi.fn();
+    const captureCatchPointerMove = vi.fn();
+    let lastProps: ReturnType<typeof usePointerEvent> | undefined;
+    const Comp = () => {
+      lastProps = usePointerEvent({
+        captureBindPointerDown,
+        captureCatchPointerMove,
+      });
+      return <view {...lastProps}></view>;
+    };
+    render(<Comp />);
+
+    expect(lastProps?.['capture-bindmousedown']).toBeDefined();
+    expect(lastProps?.['capture-bindtouchstart']).toBeDefined();
+    expect(lastProps?.['capture-catchmousemove']).toBeDefined();
+    expect(lastProps?.['capture-catchtouchmove']).toBeDefined();
+    expect(lastProps?.bindmousedown).toBeUndefined();
+    expect(lastProps?.catchmousemove).toBeUndefined();
+
+    lastProps?.['capture-bindmousedown']?.({
+      x: 10,
+      y: 20,
+      pageX: 110,
+      pageY: 120,
+      clientX: 210,
+      clientY: 220,
+      button: 1,
+      buttons: 3,
+    } as Parameters<NonNullable<typeof lastProps['capture-bindmousedown']>>[0]);
+    lastProps?.['capture-catchmousemove']?.({
+      x: 11,
+      y: 21,
+      pageX: 111,
+      pageY: 121,
+    } as Parameters<NonNullable<typeof lastProps['capture-catchmousemove']>>[0]);
+
+    expect(captureBindPointerDown).toHaveBeenCalledTimes(1);
+    expect(captureCatchPointerMove).toHaveBeenCalledTimes(1);
+    expect(captureBindPointerDown.mock.calls[0][0]).toMatchObject({
+      type: 'pointerdown',
+      pointerType: 'mouse',
+      button: 0,
+      buttons: 3,
+      x: 10,
+    });
+  });
+
   it('binds mouse down and normalizes button/buttons', () => {
     const onPointerDown = vi.fn();
     const Comp = () => {
@@ -68,6 +189,58 @@ describe('usePointerEvent (BT) integration', () => {
 });
 
 describe('usePointerEvent (MT) integration', () => {
+  it('maps main-thread catch handlers separately from bind handlers', () => {
+    const Comp = () => {
+      const props = usePointerEvent({
+        onPointerDownMT: () => {
+          'main thread';
+        },
+        catchPointerMoveMT: () => {
+          'main thread';
+        },
+        catchPointerUpMT: () => {
+          'main thread';
+        },
+        catchPointerCancelMT: () => {
+          'main thread';
+        },
+      });
+
+      expect(props['main-thread:bindmousedown']).toBeDefined();
+      expect(props['main-thread:catchmousedown']).toBeUndefined();
+      expect(props['main-thread:bindmousemove']).toBeUndefined();
+      expect(props['main-thread:catchmousemove']).toBeDefined();
+      expect(props['main-thread:catchtouchmove']).toBeDefined();
+      expect(props['main-thread:catchtouchcancel']).toBeDefined();
+      return <view {...props}></view>;
+    };
+
+    render(<Comp />);
+  });
+
+  it('maps main-thread capture handlers separately', () => {
+    const Comp = () => {
+      const props = usePointerEvent({
+        captureBindPointerDownMT: () => {
+          'main thread';
+        },
+        captureCatchPointerMoveMT: () => {
+          'main thread';
+        },
+      });
+
+      expect(props['main-thread:capture-bindmousedown']).toBeDefined();
+      expect(props['main-thread:capture-bindtouchstart']).toBeDefined();
+      expect(props['main-thread:capture-catchmousemove']).toBeDefined();
+      expect(props['main-thread:capture-catchtouchmove']).toBeDefined();
+      expect(props['main-thread:bindmousedown']).toBeUndefined();
+      expect(props['main-thread:catchmousemove']).toBeUndefined();
+      return <view {...props}></view>;
+    };
+
+    render(<Comp />);
+  });
+
   it('binds MT mouse down and normalizes button/buttons/targets', async () => {
     let mtEventRef: MainThreadRef<CustomPointerEventMT | null>;
     const Comp = () => {

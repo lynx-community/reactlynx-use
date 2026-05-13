@@ -6,6 +6,24 @@ type PointerAction =
   | 'pointermove'
   | 'pointerup'
   | 'pointercancel';
+type BindingMode = 'bind' | 'catch' | 'capture-bind' | 'capture-catch';
+type PointerTouchEventName =
+  | 'touchstart'
+  | 'touchmove'
+  | 'touchend'
+  | 'touchcancel';
+type PointerMouseEventName = 'mousedown' | 'mousemove' | 'mouseup';
+type PointerActionName = 'Down' | 'Move' | 'Up' | 'Cancel';
+type CallbackPrefix = 'on' | 'catch' | 'captureBind' | 'captureCatch';
+type PointerCallbackName =
+  `${CallbackPrefix}Pointer${PointerActionName}${'' | 'MT'}`;
+type EventProp<EventName extends string> = `${BindingMode}${EventName}`;
+type MainThreadEventProp<EventName extends string> =
+  `main-thread:${EventProp<EventName>}`;
+
+type OptionalHandlers<Key extends string, Event> = {
+  [K in Key]?: (event: Event) => void;
+};
 
 interface CustomPointerEvent {
   type: PointerAction;
@@ -24,28 +42,76 @@ interface CustomPointerEvent {
   originalEvent: unknown;
 }
 
-interface UsePointerEventReturn {
-  bindmousedown?: (e: MouseEvent) => void;
-  bindtouchstart?: (e: TouchEvent) => void;
-  bindmousemove?: (e: MouseEvent) => void;
-  bindtouchmove?: (e: TouchEvent) => void;
-  bindmouseup?: (e: MouseEvent) => void;
-  bindtouchend?: (e: TouchEvent) => void;
-  bindtouchcancel?: (e: TouchEvent) => void;
-  'main-thread:bindmousedown'?: (e: MainThread.MouseEvent) => void;
-  'main-thread:bindtouchstart'?: (e: MainThread.TouchEvent) => void;
-  'main-thread:bindmousemove'?: (e: MainThread.MouseEvent) => void;
-  'main-thread:bindtouchmove'?: (e: MainThread.TouchEvent) => void;
-  'main-thread:bindmouseup'?: (e: MainThread.MouseEvent) => void;
-  'main-thread:bindtouchend'?: (e: MainThread.TouchEvent) => void;
-  'main-thread:bindtouchcancel'?: (e: MainThread.TouchEvent) => void;
-}
+type UsePointerEventReturn =
+  & OptionalHandlers<EventProp<PointerMouseEventName>, MouseEvent>
+  & OptionalHandlers<EventProp<PointerTouchEventName>, TouchEvent>
+  & OptionalHandlers<MainThreadEventProp<PointerMouseEventName>, MainThread.MouseEvent>
+  & OptionalHandlers<MainThreadEventProp<PointerTouchEventName>, MainThread.TouchEvent>;
+
+type UsePointerEventOptions =
+  & OptionalHandlers<
+    Exclude<PointerCallbackName, `${string}MT`>,
+    CustomPointerEvent
+  >
+  & OptionalHandlers<
+    Extract<PointerCallbackName, `${string}MT`>,
+    CustomPointerEventMT
+  >;
 
 interface CustomPointerEventMT extends CustomPointerEvent {
   target: MainThread.Element;
   currentTarget: MainThread.Element;
   originalEvent: MainThread.MouseEvent | MainThread.TouchEvent;
 }
+
+const bindingModes = [
+  { eventPrefix: 'bind', callbackPrefix: 'on' },
+  { eventPrefix: 'catch', callbackPrefix: 'catch' },
+  { eventPrefix: 'capture-bind', callbackPrefix: 'captureBind' },
+  { eventPrefix: 'capture-catch', callbackPrefix: 'captureCatch' },
+] as const satisfies ReadonlyArray<{
+  eventPrefix: BindingMode;
+  callbackPrefix: CallbackPrefix;
+}>;
+
+const pointerActions = [
+  {
+    name: 'Down',
+    mouseEvent: 'mousedown',
+    touchEvent: 'touchstart',
+    action: 'pointerdown',
+  },
+  {
+    name: 'Move',
+    mouseEvent: 'mousemove',
+    touchEvent: 'touchmove',
+    action: 'pointermove',
+  },
+  {
+    name: 'Up',
+    mouseEvent: 'mouseup',
+    touchEvent: 'touchend',
+    action: 'pointerup',
+  },
+  {
+    name: 'Cancel',
+    mouseEvent: undefined,
+    touchEvent: 'touchcancel',
+    action: 'pointercancel',
+  },
+] as const satisfies ReadonlyArray<{
+  name: PointerActionName;
+  mouseEvent?: PointerMouseEventName;
+  touchEvent: PointerTouchEventName;
+  action: PointerAction;
+}>;
+
+const pointerCallbackKeys = pointerActions.flatMap(({ name }) =>
+  bindingModes.flatMap(({ callbackPrefix }) => [
+    `${callbackPrefix}Pointer${name}`,
+    `${callbackPrefix}Pointer${name}MT`,
+  ])
+) as PointerCallbackName[];
 
 function unifyPointerEvent(
   event: MouseEvent | TouchEvent,
@@ -163,119 +229,89 @@ function unifyPointerEventMT(
 
 // Button mapping is inlined in both BG and MT normalizers
 
-function usePointerEvent({
-  onPointerDown,
-  onPointerUp,
-  onPointerMove,
-  onPointerCancel,
-  onPointerUpMT,
-  onPointerMoveMT,
-  onPointerDownMT,
-  onPointerCancelMT,
-}: {
-  onPointerDown?: (event: CustomPointerEvent) => void;
-  onPointerUp?: (event: CustomPointerEvent) => void;
-  onPointerMove?: (event: CustomPointerEvent) => void;
-  onPointerCancel?: (event: CustomPointerEvent) => void;
-  onPointerUpMT?: (event: CustomPointerEventMT) => void;
-  onPointerMoveMT?: (event: CustomPointerEventMT) => void;
-  onPointerDownMT?: (event: CustomPointerEventMT) => void;
-  onPointerCancelMT?: (event: CustomPointerEventMT) => void;
-}): UsePointerEventReturn {
+function addPointerHandler(
+  result: UsePointerEventReturn,
+  mode: BindingMode,
+  mouseEvent: PointerMouseEventName | undefined,
+  touchEvent: PointerTouchEventName,
+  action: PointerAction,
+  handler: ((event: CustomPointerEvent) => void) | undefined,
+) {
+  if (!handler) return;
+
+  const target = result as Record<string, unknown>;
+  if (mouseEvent) {
+    target[`${mode}${mouseEvent}`] = (event: MouseEvent) => {
+      'background only';
+      handler(unifyPointerEvent(event, action));
+    };
+  }
+  target[`${mode}${touchEvent}`] = (event: TouchEvent) => {
+    'background only';
+    handler(unifyPointerEvent(event, action));
+  };
+}
+
+function addPointerHandlerMT(
+  result: UsePointerEventReturn,
+  mode: BindingMode,
+  mouseEvent: PointerMouseEventName | undefined,
+  touchEvent: PointerTouchEventName,
+  action: PointerAction,
+  handler: ((event: CustomPointerEventMT) => void) | undefined,
+) {
+  if (!handler) return;
+
+  const target = result as Record<string, unknown>;
+  if (mouseEvent) {
+    target[`main-thread:${mode}${mouseEvent}`] = (event: MainThread.MouseEvent) => {
+      'main thread';
+      handler(unifyPointerEventMT(event, action));
+    };
+  }
+  target[`main-thread:${mode}${touchEvent}`] = (event: MainThread.TouchEvent) => {
+    'main thread';
+    handler(unifyPointerEventMT(event, action));
+  };
+}
+
+function usePointerEvent(options: UsePointerEventOptions): UsePointerEventReturn {
+  const dependencies = pointerCallbackKeys.map((key) => options[key]);
   const result = useMemo<UsePointerEventReturn>(() => {
     const r: UsePointerEventReturn = {};
 
-    if (onPointerDown) {
-      r.bindmousedown = (event: MouseEvent) => {
-        'background only';
-        onPointerDown(unifyPointerEvent(event, 'pointerdown'));
-      };
-      r.bindtouchstart = (event: TouchEvent) => {
-        'background only';
-        onPointerDown(unifyPointerEvent(event, 'pointerdown'));
-      };
-    }
+    for (const mode of bindingModes) {
+      for (const action of pointerActions) {
+        const callbackKey =
+          `${mode.callbackPrefix}Pointer${action.name}` as PointerCallbackName;
+        const callbackMTKey =
+          `${mode.callbackPrefix}Pointer${action.name}MT` as PointerCallbackName;
 
-    if (onPointerMove) {
-      r.bindmousemove = (event: MouseEvent) => {
-        'background only';
-        onPointerMove(unifyPointerEvent(event, 'pointermove'));
-      };
-      r.bindtouchmove = (event: TouchEvent) => {
-        'background only';
-        onPointerMove(unifyPointerEvent(event, 'pointermove'));
-      };
-    }
-
-    if (onPointerUp) {
-      r.bindmouseup = (event: MouseEvent) => {
-        'background only';
-        onPointerUp(unifyPointerEvent(event, 'pointerup'));
-      };
-      r.bindtouchend = (event: TouchEvent) => {
-        'background only';
-        onPointerUp(unifyPointerEvent(event, 'pointerup'));
-      };
-    }
-
-    if (onPointerCancel) {
-      r.bindtouchcancel = (event: TouchEvent) => {
-        'background only';
-        onPointerCancel(unifyPointerEvent(event, 'pointercancel'));
-      };
-    }
-
-    if (onPointerDownMT) {
-      r['main-thread:bindmousedown'] = (event: MainThread.MouseEvent) => {
-        'main thread';
-        onPointerDownMT(unifyPointerEventMT(event, 'pointerdown'));
-      };
-      r['main-thread:bindtouchstart'] = (event: MainThread.TouchEvent) => {
-        'main thread';
-        onPointerDownMT(unifyPointerEventMT(event, 'pointerdown'));
-      };
-    }
-
-    if (onPointerMoveMT) {
-      r['main-thread:bindmousemove'] = (event: MainThread.MouseEvent) => {
-        'main thread';
-        onPointerMoveMT(unifyPointerEventMT(event, 'pointermove'));
-      };
-      r['main-thread:bindtouchmove'] = (event: MainThread.TouchEvent) => {
-        'main thread';
-        onPointerMoveMT(unifyPointerEventMT(event, 'pointermove'));
-      };
-    }
-
-    if (onPointerUpMT) {
-      r['main-thread:bindmouseup'] = (event: MainThread.MouseEvent) => {
-        'main thread';
-        onPointerUpMT(unifyPointerEventMT(event, 'pointerup'));
-      };
-      r['main-thread:bindtouchend'] = (event: MainThread.TouchEvent) => {
-        'main thread';
-        onPointerUpMT(unifyPointerEventMT(event, 'pointerup'));
-      };
-    }
-
-    if (onPointerCancelMT) {
-      r['main-thread:bindtouchcancel'] = (event: MainThread.TouchEvent) => {
-        'main thread';
-        onPointerCancelMT(unifyPointerEventMT(event, 'pointercancel'));
-      };
+        addPointerHandler(
+          r,
+          mode.eventPrefix,
+          action.mouseEvent,
+          action.touchEvent,
+          action.action,
+          options[callbackKey] as
+            | ((event: CustomPointerEvent) => void)
+            | undefined,
+        );
+        addPointerHandlerMT(
+          r,
+          mode.eventPrefix,
+          action.mouseEvent,
+          action.touchEvent,
+          action.action,
+          options[callbackMTKey] as
+            | ((event: CustomPointerEventMT) => void)
+            | undefined,
+        );
+      }
     }
 
     return r;
-  }, [
-    onPointerDown,
-    onPointerUp,
-    onPointerMove,
-    onPointerCancel,
-    onPointerUpMT,
-    onPointerMoveMT,
-    onPointerDownMT,
-    onPointerCancelMT,
-  ]);
+  }, dependencies);
 
   return result;
 }

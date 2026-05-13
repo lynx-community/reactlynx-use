@@ -25,36 +25,42 @@ function App() {
 ## Type Declarations
 
 ```tsx
-type TouchAction = 'touchstart' | 'touchmove' | 'touchend';
+type TouchAction = 'touchstart' | 'touchmove' | 'touchend' | 'touchcancel';
+type BindingMode = 'bind' | 'catch' | 'capture-bind' | 'capture-catch';
+type TouchCallbackPrefix = 'on' | 'catch' | 'captureBind' | 'captureCatch';
+type TouchActionName = 'Start' | 'Move' | 'End' | 'Cancel';
 
-function useTouchEmulation({
-  onTouchStart,
-  onTouchMove,
-  onTouchEnd,
-  onTouchStartMT,
-  onTouchMoveMT,
-  onTouchEndMT,
-}: {
-  onTouchStart?: (event: TouchEvent) => void;
-  onTouchMove?: (event: TouchEvent) => void;
-  onTouchEnd?: (event: TouchEvent) => void;
-  onTouchStartMT?: (event: MainThread.TouchEvent) => void;
-  onTouchMoveMT?: (event: MainThread.TouchEvent) => void;
-  onTouchEndMT?: (event: MainThread.TouchEvent) => void;
+type TouchCallbackName =
+  `${TouchCallbackPrefix}Touch${TouchActionName}${'' | 'MT'}`;
+
+type TouchEventProp = `${BindingMode}${TouchAction}`;
+type MouseEventProp =
+  `${BindingMode}${'mousedown' | 'mousemove' | 'mouseup'}`;
+type MainThreadEventProp<EventName extends string> =
+  `main-thread:${BindingMode}${EventName}`;
+
+function useTouchEmulation(options: {
+  [K in TouchCallbackName]?: K extends `${string}MT`
+    ? (event: MainThread.TouchEvent) => void
+    : (event: TouchEvent) => void;
 }): {
-  'bindtouchstart'?: (e: TouchEvent) => void;
-  'bindmousedown'?: (e: MouseEvent) => void;
-  'bindtouchmove'?: (e: TouchEvent) => void;
-  'bindmousemove'?: (e: MouseEvent) => void;
-  'bindtouchend'?: (e: TouchEvent) => void;
-  'bindmouseup'?: (e: MouseEvent) => void;
-  'main-thread:bindtouchstart'?: (e: MainThread.TouchEvent) => void;
-  'main-thread:bindmousedown'?: (e: MainThread.MouseEvent) => void;
-  'main-thread:bindtouchmove'?: (e: MainThread.TouchEvent) => void;
-  'main-thread:bindmousemove'?: (e: MainThread.MouseEvent) => void;
-  'main-thread:bindtouchend'?: (e: MainThread.TouchEvent) => void;
-  'main-thread:bindmouseup'?: (e: MainThread.MouseEvent) => void;
+  [K in TouchEventProp]?: (event: TouchEvent) => void;
+} & {
+  [K in MouseEventProp]?: (event: MouseEvent) => void;
+} & {
+  [K in MainThreadEventProp<TouchAction>]?: (event: MainThread.TouchEvent) => void;
+} & {
+  [K in MainThreadEventProp<'mousedown' | 'mousemove' | 'mouseup'>]?: (event: MainThread.MouseEvent) => void;
 };
 
 // Alias: useTouchEvent provides the same API
 ```
+
+Callback prefixes map to event binding modes:
+
+- `onTouchStart` -> `bindtouchstart` and `bindmousedown`
+- `catchTouchStart` -> `catchtouchstart` and `catchmousedown`
+- `captureBindTouchStart` -> `capture-bindtouchstart` and `capture-bindmousedown`
+- `captureCatchTouchStart` -> `capture-catchtouchstart` and `capture-catchmousedown`
+
+Append `MT` to use the main-thread variants, for example `captureCatchTouchStartMT` maps to `main-thread:capture-catchtouchstart` and `main-thread:capture-catchmousedown`.

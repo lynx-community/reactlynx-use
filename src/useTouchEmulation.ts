@@ -2,23 +2,79 @@ import { useMemo } from '@lynx-js/react';
 import type { MainThread, MouseEvent, Touch, TouchEvent } from '@lynx-js/types';
 
 type TouchAction = 'touchstart' | 'touchmove' | 'touchend' | 'touchcancel';
+type BindingMode = 'bind' | 'catch' | 'capture-bind' | 'capture-catch';
+type TouchEventName = TouchAction;
+type MouseEventName = 'mousedown' | 'mousemove' | 'mouseup';
+type TouchActionName = 'Start' | 'Move' | 'End' | 'Cancel';
+type CallbackPrefix = 'on' | 'catch' | 'captureBind' | 'captureCatch';
+type TouchCallbackName =
+  `${CallbackPrefix}Touch${TouchActionName}${'' | 'MT'}`;
+type EventProp<EventName extends string> = `${BindingMode}${EventName}`;
+type MainThreadEventProp<EventName extends string> =
+  `main-thread:${EventProp<EventName>}`;
 
-interface UseTouchEmulationReturn {
-  bindtouchstart?: (e: TouchEvent) => void;
-  bindmousedown?: (e: MouseEvent) => void;
-  bindtouchmove?: (e: TouchEvent) => void;
-  bindmousemove?: (e: MouseEvent) => void;
-  bindtouchend?: (e: TouchEvent) => void;
-  bindtouchcancel?: (e: TouchEvent) => void;
-  bindmouseup?: (e: MouseEvent) => void;
-  'main-thread:bindtouchstart'?: (e: MainThread.TouchEvent) => void;
-  'main-thread:bindmousedown'?: (e: MainThread.MouseEvent) => void;
-  'main-thread:bindtouchmove'?: (e: MainThread.TouchEvent) => void;
-  'main-thread:bindmousemove'?: (e: MainThread.MouseEvent) => void;
-  'main-thread:bindtouchend'?: (e: MainThread.TouchEvent) => void;
-  'main-thread:bindmouseup'?: (e: MainThread.MouseEvent) => void;
-  'main-thread:bindtouchcancel'?: (e: MainThread.TouchEvent) => void;
-}
+type OptionalHandlers<Key extends string, Event> = {
+  [K in Key]?: (event: Event) => void;
+};
+
+type UseTouchEmulationReturn =
+  & OptionalHandlers<EventProp<TouchEventName>, TouchEvent>
+  & OptionalHandlers<EventProp<MouseEventName>, MouseEvent>
+  & OptionalHandlers<MainThreadEventProp<TouchEventName>, MainThread.TouchEvent>
+  & OptionalHandlers<MainThreadEventProp<MouseEventName>, MainThread.MouseEvent>;
+
+type UseTouchEmulationOptions =
+  & OptionalHandlers<Exclude<TouchCallbackName, `${string}MT`>, TouchEvent>
+  & OptionalHandlers<Extract<TouchCallbackName, `${string}MT`>, MainThread.TouchEvent>;
+
+const bindingModes = [
+  { eventPrefix: 'bind', callbackPrefix: 'on' },
+  { eventPrefix: 'catch', callbackPrefix: 'catch' },
+  { eventPrefix: 'capture-bind', callbackPrefix: 'captureBind' },
+  { eventPrefix: 'capture-catch', callbackPrefix: 'captureCatch' },
+] as const satisfies ReadonlyArray<{
+  eventPrefix: BindingMode;
+  callbackPrefix: CallbackPrefix;
+}>;
+
+const touchActions = [
+  {
+    name: 'Start',
+    touchEvent: 'touchstart',
+    mouseEvent: 'mousedown',
+    action: 'touchstart',
+  },
+  {
+    name: 'Move',
+    touchEvent: 'touchmove',
+    mouseEvent: 'mousemove',
+    action: 'touchmove',
+  },
+  {
+    name: 'End',
+    touchEvent: 'touchend',
+    mouseEvent: 'mouseup',
+    action: 'touchend',
+  },
+  {
+    name: 'Cancel',
+    touchEvent: 'touchcancel',
+    mouseEvent: undefined,
+    action: 'touchcancel',
+  },
+] as const satisfies ReadonlyArray<{
+  name: TouchActionName;
+  touchEvent: TouchEventName;
+  mouseEvent?: MouseEventName;
+  action: TouchAction;
+}>;
+
+const touchCallbackKeys = touchActions.flatMap(({ name }) =>
+  bindingModes.flatMap(({ callbackPrefix }) => [
+    `${callbackPrefix}Touch${name}`,
+    `${callbackPrefix}Touch${name}MT`,
+  ])
+) as TouchCallbackName[];
 
 function toTouchEvent(
   event: MouseEvent | TouchEvent,
@@ -72,126 +128,99 @@ function toTouchEventMT(
   } as unknown as MainThread.TouchEvent;
 }
 
-function useTouchEmulation({
-  onTouchStart,
-  onTouchMove,
-  onTouchEnd,
-  onTouchCancel,
-  onTouchStartMT,
-  onTouchMoveMT,
-  onTouchEndMT,
-  onTouchCancelMT,
-}: {
-  onTouchStart?: (event: TouchEvent) => void;
-  onTouchMove?: (event: TouchEvent) => void;
-  onTouchEnd?: (event: TouchEvent) => void;
-  onTouchCancel?: (event: TouchEvent) => void;
-  onTouchStartMT?: (event: MainThread.TouchEvent) => void;
-  onTouchMoveMT?: (event: MainThread.TouchEvent) => void;
-  onTouchEndMT?: (event: MainThread.TouchEvent) => void;
-  onTouchCancelMT?: (event: MainThread.TouchEvent) => void;
-}): UseTouchEmulationReturn {
+function addTouchHandler(
+  result: UseTouchEmulationReturn,
+  mode: BindingMode,
+  touchEvent: TouchEventName,
+  mouseEvent: MouseEventName | undefined,
+  action: TouchAction,
+  handler: ((event: TouchEvent) => void) | undefined,
+) {
+  if (!handler) return;
+
+  const target = result as Record<string, unknown>;
+  target[`${mode}${touchEvent}`] = (event: TouchEvent) => {
+    'background only';
+    handler(toTouchEvent(event, action));
+  };
+
+  if (!mouseEvent) return;
+  target[`${mode}${mouseEvent}`] = (event: MouseEvent) => {
+    'background only';
+    if (action === 'touchmove') {
+      const buttons = (event as unknown as { buttons?: number }).buttons;
+      // Allow only left-button drags
+      if (!buttons || (buttons & 1) === 0) return;
+    }
+    handler(toTouchEvent(event, action));
+  };
+}
+
+function addTouchHandlerMT(
+  result: UseTouchEmulationReturn,
+  mode: BindingMode,
+  touchEvent: TouchEventName,
+  mouseEvent: MouseEventName | undefined,
+  action: TouchAction,
+  handler: ((event: MainThread.TouchEvent) => void) | undefined,
+) {
+  if (!handler) return;
+
+  const target = result as Record<string, unknown>;
+  target[`main-thread:${mode}${touchEvent}`] = (event: MainThread.TouchEvent) => {
+    'main thread';
+    handler(toTouchEventMT(event, action));
+  };
+
+  if (!mouseEvent) return;
+  target[`main-thread:${mode}${mouseEvent}`] = (event: MainThread.MouseEvent) => {
+    'main thread';
+    if (action === 'touchmove') {
+      const buttons = (event as unknown as { buttons?: number }).buttons;
+      // Allow only left-button drags
+      if (!buttons || (buttons & 1) === 0) return;
+    }
+    handler(toTouchEventMT(event, action));
+  };
+}
+
+function useTouchEmulation(
+  options: UseTouchEmulationOptions,
+): UseTouchEmulationReturn {
+  const dependencies = touchCallbackKeys.map((key) => options[key]);
   const result = useMemo<UseTouchEmulationReturn>(() => {
     const r: UseTouchEmulationReturn = {};
 
-    if (onTouchStart) {
-      r.bindtouchstart = (event: TouchEvent) => {
-        'background only';
-        onTouchStart(toTouchEvent(event, 'touchstart'));
-      };
-      r.bindmousedown = (event: MouseEvent) => {
-        'background only'
-        onTouchStart(toTouchEvent(event, 'touchstart'));
-      };
-    }
+    for (const mode of bindingModes) {
+      for (const action of touchActions) {
+        const callbackKey =
+          `${mode.callbackPrefix}Touch${action.name}` as TouchCallbackName;
+        const callbackMTKey =
+          `${mode.callbackPrefix}Touch${action.name}MT` as TouchCallbackName;
 
-    if (onTouchMove) {
-      r.bindtouchmove = (event: TouchEvent) => {
-        'background only';
-        onTouchMove(toTouchEvent(event, 'touchmove'));
-      };
-      r.bindmousemove = (event: MouseEvent) => {
-        'background only';
-        const buttons = (event as unknown as { buttons?: number }).buttons;
-        // Allow only left-button drags
-        if (!buttons || (buttons & 1) === 0) return;
-        onTouchMove(toTouchEvent(event, 'touchmove'));
-      };
-    }
-
-    if (onTouchEnd) {
-      r.bindtouchend = (event: TouchEvent) => {
-        'background only';
-        onTouchEnd(toTouchEvent(event, 'touchend'));
-      };
-      r.bindmouseup = (event: MouseEvent) => {
-        'background only';
-        onTouchEnd(toTouchEvent(event, 'touchend'));
-      };
-    }
-
-    if (onTouchCancel) {
-      r.bindtouchcancel = (event: TouchEvent) => {
-        'background only';
-        onTouchCancel(toTouchEvent(event, 'touchcancel'));
-      };
-    }
-
-    if (onTouchStartMT) {
-      r['main-thread:bindtouchstart'] = (event: MainThread.TouchEvent) => {
-        'main thread';
-        onTouchStartMT(toTouchEventMT(event, 'touchstart'));
-      };
-
-      r['main-thread:bindmousedown'] = (event: MainThread.MouseEvent) => {
-        'main thread';
-        onTouchStartMT(toTouchEventMT(event, 'touchstart'));
-      };
-    }
-
-    if (onTouchMoveMT) {
-      r['main-thread:bindtouchmove'] = (event: MainThread.TouchEvent) => {
-        'main thread';
-        onTouchMoveMT(toTouchEventMT(event, 'touchmove'));
-      };
-      r['main-thread:bindmousemove'] = (event: MainThread.MouseEvent) => {
-        'main thread';
-        const buttons = (event as unknown as { buttons?: number }).buttons;
-        // Allow only left-button drags
-        if (!buttons || (buttons & 1) === 0) return;
-        onTouchMoveMT(toTouchEventMT(event, 'touchmove'));
-      };
-    }
-
-    if (onTouchEndMT) {
-      r['main-thread:bindtouchend'] = (event: MainThread.TouchEvent) => {
-        'main thread';
-        onTouchEndMT(toTouchEventMT(event, 'touchend'));
-      };
-      r['main-thread:bindmouseup'] = (event: MainThread.MouseEvent) => {
-        'main thread';
-        onTouchEndMT(toTouchEventMT(event, 'touchend'));
-      };
-    }
-
-    if (onTouchCancelMT) {
-      r['main-thread:bindtouchcancel'] = (event: MainThread.TouchEvent) => {
-        'main thread';
-        onTouchCancelMT(toTouchEventMT(event, 'touchcancel'));
-      };
+        addTouchHandler(
+          r,
+          mode.eventPrefix,
+          action.touchEvent,
+          action.mouseEvent,
+          action.action,
+          options[callbackKey] as ((event: TouchEvent) => void) | undefined,
+        );
+        addTouchHandlerMT(
+          r,
+          mode.eventPrefix,
+          action.touchEvent,
+          action.mouseEvent,
+          action.action,
+          options[callbackMTKey] as
+            | ((event: MainThread.TouchEvent) => void)
+            | undefined,
+        );
+      }
     }
 
     return r;
-  }, [
-    onTouchStart,
-    onTouchMove,
-    onTouchEnd,
-    onTouchCancel,
-    onTouchStartMT,
-    onTouchMoveMT,
-    onTouchEndMT,
-    onTouchCancelMT,
-  ]);
+  }, dependencies);
 
   return result;
 }

@@ -9,6 +9,110 @@ import { describe, expect, it, vi } from 'vitest';
 import useTouchEmulation from '../src/useTouchEmulation';
 
 describe('useTouchEmulation (BT) integration', () => {
+  it('maps catch handlers separately from bind handlers', () => {
+    const catchTouchStart = vi.fn();
+    const catchTouchMove = vi.fn();
+    const catchTouchEnd = vi.fn();
+    const catchTouchCancel = vi.fn();
+    let lastProps: ReturnType<typeof useTouchEmulation> | undefined;
+    const Comp = () => {
+      lastProps = useTouchEmulation({
+        onTouchStart: vi.fn(),
+        catchTouchStart,
+        catchTouchMove,
+        catchTouchEnd,
+        catchTouchCancel,
+      });
+      return <view {...lastProps}></view>;
+    };
+    render(<Comp />);
+
+    expect(lastProps?.bindtouchstart).toBeDefined();
+    expect(lastProps?.catchtouchmove).toBeDefined();
+    expect(lastProps?.bindtouchmove).toBeUndefined();
+
+    lastProps?.catchmousedown?.({
+      pageX: 110,
+      pageY: 120,
+      clientX: 210,
+      clientY: 220,
+    } as Parameters<NonNullable<typeof lastProps.catchmousedown>>[0]);
+    lastProps?.catchmousemove?.({
+      pageX: 115,
+      pageY: 125,
+      clientX: 215,
+      clientY: 225,
+      buttons: 1,
+    } as Parameters<NonNullable<typeof lastProps.catchmousemove>>[0]);
+    lastProps?.catchmouseup?.({
+      pageX: 116,
+      pageY: 126,
+      clientX: 216,
+      clientY: 226,
+    } as Parameters<NonNullable<typeof lastProps.catchmouseup>>[0]);
+    lastProps?.catchtouchcancel?.({
+      touches: [],
+      changedTouches: [{
+        identifier: 1,
+        pageX: 117,
+        pageY: 127,
+        clientX: 217,
+        clientY: 227,
+      }],
+    } as unknown as Parameters<NonNullable<typeof lastProps.catchtouchcancel>>[0]);
+
+    expect(catchTouchStart).toHaveBeenCalledTimes(1);
+    expect(catchTouchMove).toHaveBeenCalledTimes(1);
+    expect(catchTouchEnd).toHaveBeenCalledTimes(1);
+    expect(catchTouchCancel).toHaveBeenCalledTimes(1);
+    const startEvent = catchTouchStart.mock.calls[0][0] as unknown as TouchEvent;
+    // @ts-expect-error test environment type narrowing
+    expect(startEvent.detail.x).toBe(110);
+    expect(startEvent.touches[0].clientX).toBe(210);
+  });
+
+  it('maps capture handlers separately from bind and catch handlers', () => {
+    const captureBindTouchStart = vi.fn();
+    const captureCatchTouchMove = vi.fn();
+    let lastProps: ReturnType<typeof useTouchEmulation> | undefined;
+    const Comp = () => {
+      lastProps = useTouchEmulation({
+        captureBindTouchStart,
+        captureCatchTouchMove,
+      });
+      return <view {...lastProps}></view>;
+    };
+    render(<Comp />);
+
+    expect(lastProps?.['capture-bindtouchstart']).toBeDefined();
+    expect(lastProps?.['capture-bindmousedown']).toBeDefined();
+    expect(lastProps?.['capture-catchtouchmove']).toBeDefined();
+    expect(lastProps?.['capture-catchmousemove']).toBeDefined();
+    expect(lastProps?.bindtouchstart).toBeUndefined();
+    expect(lastProps?.catchtouchmove).toBeUndefined();
+
+    lastProps?.['capture-bindmousedown']?.({
+      pageX: 110,
+      pageY: 120,
+      clientX: 210,
+      clientY: 220,
+    } as Parameters<NonNullable<typeof lastProps['capture-bindmousedown']>>[0]);
+    lastProps?.['capture-catchmousemove']?.({
+      pageX: 115,
+      pageY: 125,
+      clientX: 215,
+      clientY: 225,
+      buttons: 1,
+    } as Parameters<NonNullable<typeof lastProps['capture-catchmousemove']>>[0]);
+
+    expect(captureBindTouchStart).toHaveBeenCalledTimes(1);
+    expect(captureCatchTouchMove).toHaveBeenCalledTimes(1);
+    const startEvent = captureBindTouchStart.mock.calls[0][0] as unknown as TouchEvent;
+    // @ts-expect-error test environment type narrowing
+    expect(startEvent.detail.x).toBe(110);
+    expect(startEvent.touches[0].clientX).toBe(210);
+  });
+
   it('synthesizes touch from mouse down', () => {
     const onTouchStart = vi.fn();
     const Comp = () => {
@@ -212,6 +316,58 @@ describe('useTouchEmulation event semantics', () => {
   });
 });
 describe('useTouchEmulation (MT) integration', () => {
+  it('maps main-thread catch handlers separately from bind handlers', () => {
+    const Comp = () => {
+      const props = useTouchEmulation({
+        onTouchStartMT: () => {
+          'main thread';
+        },
+        catchTouchMoveMT: () => {
+          'main thread';
+        },
+        catchTouchEndMT: () => {
+          'main thread';
+        },
+        catchTouchCancelMT: () => {
+          'main thread';
+        },
+      });
+
+      expect(props['main-thread:bindtouchstart']).toBeDefined();
+      expect(props['main-thread:catchtouchstart']).toBeUndefined();
+      expect(props['main-thread:bindtouchmove']).toBeUndefined();
+      expect(props['main-thread:catchtouchmove']).toBeDefined();
+      expect(props['main-thread:catchmousemove']).toBeDefined();
+      expect(props['main-thread:catchtouchcancel']).toBeDefined();
+      return <view {...props}></view>;
+    };
+
+    render(<Comp />);
+  });
+
+  it('maps main-thread capture handlers separately', () => {
+    const Comp = () => {
+      const props = useTouchEmulation({
+        captureBindTouchStartMT: () => {
+          'main thread';
+        },
+        captureCatchTouchMoveMT: () => {
+          'main thread';
+        },
+      });
+
+      expect(props['main-thread:capture-bindtouchstart']).toBeDefined();
+      expect(props['main-thread:capture-bindmousedown']).toBeDefined();
+      expect(props['main-thread:capture-catchtouchmove']).toBeDefined();
+      expect(props['main-thread:capture-catchmousemove']).toBeDefined();
+      expect(props['main-thread:bindtouchstart']).toBeUndefined();
+      expect(props['main-thread:catchtouchmove']).toBeUndefined();
+      return <view {...props}></view>;
+    };
+
+    render(<Comp />);
+  });
+
   it('synthesizes MT touch from mouse down', async () => {
     let mtEventRef: MainThreadRef<MainThread.TouchEvent | null>;
     const Comp = () => {
