@@ -26,7 +26,10 @@ function App() {
 ## 类型定义
 
 ```tsx
-type PointerAction = 'pointerdown' | 'pointermove' | 'pointerup';
+type PointerAction = 'pointerdown' | 'pointermove' | 'pointerup' | 'pointercancel';
+type BindingMode = 'bind' | 'catch' | 'capture-bind' | 'capture-catch';
+type PointerCallbackPrefix = 'on' | 'catch' | 'captureBind' | 'captureCatch';
+type PointerActionName = 'Down' | 'Move' | 'Up' | 'Cancel';
 
 interface CustomPointerEvent {
     type: PointerAction;
@@ -51,26 +54,37 @@ interface CustomPointerEventMT extends CustomPointerEvent {
     originalEvent: MainThread.MouseEvent | MainThread.TouchEvent;
 }
 
-function usePointerEvent({ onPointerDown, onPointerUp, onPointerMove, onPointerUpMT, onPointerMoveMT, onPointerDownMT, }: {
-    onPointerDown?: (event: CustomPointerEvent) => void;
-    onPointerUp?: (event: CustomPointerEvent) => void;
-    onPointerMove?: (event: CustomPointerEvent) => void;
-    onPointerUpMT?: (event: CustomPointerEventMT) => void;
-    onPointerMoveMT?: (event: CustomPointerEventMT) => void;
-    onPointerDownMT?: (event: CustomPointerEventMT) => void;
+type PointerCallbackName =
+  `${PointerCallbackPrefix}Pointer${PointerActionName}${'' | 'MT'}`;
+
+type TouchEventProp =
+  `${BindingMode}${'touchstart' | 'touchmove' | 'touchend' | 'touchcancel'}`;
+type MouseEventProp =
+  `${BindingMode}${'mousedown' | 'mousemove' | 'mouseup'}`;
+type MainThreadEventProp<EventName extends string> =
+  `main-thread:${BindingMode}${EventName}`;
+
+function usePointerEvent(options: {
+  [K in PointerCallbackName]?: K extends `${string}MT`
+    ? (event: CustomPointerEventMT) => void
+    : (event: CustomPointerEvent) => void;
 }): {
-    'bindmousedown'?: (e: MouseEvent) => void;
-    'bindtouchstart'?: (e: TouchEvent) => void;
-    'bindmousemove'?: (e: MouseEvent) => void;
-    'bindtouchmove'?: (e: TouchEvent) => void;
-    'bindmouseup'?: (e: MouseEvent) => void;
-    'bindtouchend'?: (e: TouchEvent) => void;
-    'main-thread:bindmousedown'?: (e: MainThread.MouseEvent) => void;
-    'main-thread:bindtouchstart'?: (e: MainThread.TouchEvent) => void;
-    'main-thread:bindmousemove'?: (e: MainThread.MouseEvent) => void;
-    'main-thread:bindtouchmove'?: (e: MainThread.TouchEvent) => void;
-    'main-thread:bindmouseup'?: (e: MainThread.MouseEvent) => void;
-    'main-thread:bindtouchend'?: (e: MainThread.TouchEvent) => void;
+  [K in TouchEventProp]?: (event: TouchEvent) => void;
+} & {
+  [K in MouseEventProp]?: (event: MouseEvent) => void;
+} & {
+  [K in MainThreadEventProp<'touchstart' | 'touchmove' | 'touchend' | 'touchcancel'>]?: (event: MainThread.TouchEvent) => void;
+} & {
+  [K in MainThreadEventProp<'mousedown' | 'mousemove' | 'mouseup'>]?: (event: MainThread.MouseEvent) => void;
 };
 
 ```
+
+回调前缀会映射到对应的事件绑定模式：
+
+* `onPointerDown` -> `bindmousedown` 和 `bindtouchstart`
+* `catchPointerDown` -> `catchmousedown` 和 `catchtouchstart`
+* `captureBindPointerDown` -> `capture-bindmousedown` 和 `capture-bindtouchstart`
+* `captureCatchPointerDown` -> `capture-catchmousedown` 和 `capture-catchtouchstart`
+
+追加 `MT` 可以使用主线程版本，例如 `captureCatchPointerDownMT` 会映射到 `main-thread:capture-catchmousedown` 和 `main-thread:capture-catchtouchstart`。
