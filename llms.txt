@@ -1,4 +1,4 @@
-# ReactLynxUse v0.2.0
+# ReactLynxUse v0.2.1
 
 > A React-style hooks library designed specifically for ReactLynx
 
