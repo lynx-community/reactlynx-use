@@ -1,5 +1,11 @@
 # @lynx-js/react-use
 
+## 0.2.1
+
+### Patch Changes
+
+- 77c11e7: Update `useTouchEmulation` and `usePointerEvent` to support catch, capture-bind, and capture-catch event modes.
+
 ## 0.2.0
 
 ### Minor Changes
