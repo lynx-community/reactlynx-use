@@ -30,28 +30,34 @@ import { default as _useUnmount } from "./useUnmount.js";
 import { default as _useUnmountPromise } from "./useUnmountPromise.js";
 import { default as _useUpdateEffect } from "./useUpdateEffect.js";
 
-export const createMemo = factory(_createMemo);
-export const useBoolean = factory(_useBoolean);
-export const useCounter = factory(_useCounter);
-export const useDefault = factory(_useDefault);
-export const useEffectOnce = factory(_useEffectOnce);
-export const useError = factory(_useError);
-export const useLatest = factory(_useLatest);
-export const useLifecycles = factory(_useLifecycles);
-export const useMap = factory(_useMap);
-export const useMountedState = factory(_useMountedState);
-export const useNumber = factory(_useNumber);
-export const usePrevious = factory(_usePrevious);
-export const useQueue = factory(_useQueue);
-export const useSet = factory(_useSet);
-export const useSetState = factory(_useSetState);
-export const useThrottle = factory(_useThrottle);
-export const useThrottleFn = factory(_useThrottleFn);
-export const useToggle = factory(_useToggle);
-export const useUnmount = factory(_useUnmount);
-export const useUnmountPromise = factory(_useUnmountPromise);
-export const useUpdateEffect = factory(_useUpdateEffect);
-export const useExposureForNode = factory(_useExposureForNode);
-export const useExposureForPage = factory(_useExposureForPage);
-export const useListScrollEvent = factory(_useListScrollEvent);
-export const useStayTime = factory(_useStayTime);
+export const createMemo = /* @__PURE__ */ factory(_createMemo);
+export const useBoolean = /* @__PURE__ */ factory(_useBoolean);
+export const useCounter = /* @__PURE__ */ factory(_useCounter);
+export const useDefault = /* @__PURE__ */ factory(_useDefault);
+export const useEffectOnce = /* @__PURE__ */ factory(_useEffectOnce);
+export const useError = /* @__PURE__ */ factory(_useError);
+export const useLatest = /* @__PURE__ */ factory(_useLatest);
+export const useLifecycles = /* @__PURE__ */ factory(_useLifecycles);
+export const useMap = /* @__PURE__ */ factory(_useMap);
+export const useMountedState = /* @__PURE__ */ factory(_useMountedState);
+export const useNumber = /* @__PURE__ */ factory(_useNumber);
+export const usePrevious = /* @__PURE__ */ factory(_usePrevious);
+export const useQueue = /* @__PURE__ */ factory(_useQueue);
+export const useSet = /* @__PURE__ */ factory(_useSet);
+export const useSetState = /* @__PURE__ */ factory(_useSetState);
+export const useThrottle = /* @__PURE__ */ factory(_useThrottle);
+export const useThrottleFn = /* @__PURE__ */ factory(_useThrottleFn);
+export const useToggle = /* @__PURE__ */ factory(_useToggle);
+export const useUnmount = /* @__PURE__ */ factory(_useUnmount);
+export const useUnmountPromise = /* @__PURE__ */ factory(_useUnmountPromise);
+export const useUpdateEffect = /* @__PURE__ */ factory(_useUpdateEffect);
+export const useExposureForNode = /* @__PURE__ */ factory(
+  _useExposureForNode,
+);
+export const useExposureForPage = /* @__PURE__ */ factory(
+  _useExposureForPage,
+);
+export const useListScrollEvent = /* @__PURE__ */ factory(
+  _useListScrollEvent,
+);
+export const useStayTime = /* @__PURE__ */ factory(_useStayTime);
