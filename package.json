@@ -30,7 +30,8 @@
     "docs:deploy": "RSPRESS_DEPLOY=1 rspress build",
     "docs:preview": "rspress preview",
     "format": "biome format --write",
-    "test": "vitest",
+    "test": "vitest && pnpm test:tree-shaking",
+    "test:tree-shaking": "pnpm build && node scripts/test-tree-shaking.mjs",
     "release": "pnpm run build && pnpm changeset publish",
     "prepare": "husky"
   },
