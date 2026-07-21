@@ -11,6 +11,9 @@ const packageRoot = path.resolve(
   "..",
 );
 await access(path.join(packageRoot, "dist/useTouchEmulation.js"));
+await assert.rejects(access(path.join(packageRoot, "dist/index.cjs")), {
+  code: "ENOENT",
+});
 
 const temporaryRoot = await mkdtemp(
   path.join(tmpdir(), "reactlynx-use-tree-shaking-"),
@@ -45,7 +48,7 @@ try {
     },
     resolve: {
       alias: {
-        "@lynx-js/react-use$": path.join(packageRoot, "dist/index.js"),
+        "@lynx-js/react-use$": packageRoot,
       },
     },
   });

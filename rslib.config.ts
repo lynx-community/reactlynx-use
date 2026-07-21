@@ -9,10 +9,6 @@ export default defineConfig({
       bundle: false,
       dts: true,
     },
-    {
-      format: "cjs",
-      syntax: ["node 18"],
-    },
   ],
   source: {
     tsconfigPath: "./tsconfig.build.json",
