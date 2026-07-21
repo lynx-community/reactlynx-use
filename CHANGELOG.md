@@ -1,5 +1,11 @@
 # @lynx-js/react-use
 
+## 0.2.2
+
+### Patch Changes
+
+- f407b01: Preserve ESM module boundaries so root imports can tree-shake unused hooks.
+
 ## 0.2.1
 
 ### Patch Changes
