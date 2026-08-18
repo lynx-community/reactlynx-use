@@ -1,99 +1,135 @@
 # useComputedStyle
 
-从主线程元素读取已解析的 CSS 计算属性值，并将其转发到后台（React）线程的 Hook。
+`useComputedStyle` 从主线程元素读取已解析的 CSS 属性值，并将结果返回后台（React）线程。它适用于原生元素属性只接受普通值、而这个值来自 CSS 自定义属性的场景。
 
-## 问题
+## 使用要求
 
-Lynx 的 `<svg>` 元素有一个 `current-color` 属性（`<image>` 有 `tint-color`），它接受纯色字符串，但**不支持 `var(--css-var)` 语法**，因为它是组件属性而非 CSS 属性。
+- `element.getComputedStyleProperty()` 要求 Lynx SDK 3.5 或更高版本；应用 Bundle 的引擎版本至少应设为 `3.5`。
+- 通过内联 `style` 对象动态设置 CSS 自定义属性时，需要开启 `enableCSSInlineVariables: true`。
+- 标准 CSS 属性和 `main-thread:ref` 必须位于同一个元素上，不依赖 CSS 继承。
 
-这使得通过 CSS 自定义属性驱动 SVG 图标颜色变得困难——而这在使用 CSS 变量进行主题化的设计系统中是一种常见模式。
+例如：
 
-## 解决方案
+```ts title="lynx.config.ts"
+import { pluginLynxConfig } from "@lynx-js/config-rsbuild-plugin";
+import { pluginReactLynx } from "@lynx-js/react-rsbuild-plugin";
+import { defineConfig } from "@lynx-js/rspeedy";
 
-`useComputedStyle` 弥补了这一差距：
-
-1. 声明一个带 `var()` 值的标准 CSS 属性（如 `color: var(--theme-icon-color)`）
-2. Hook 通过 `element.getComputedStyles()` 在主线程上读取**已解析的**值
-3. 通过 `runOnBackground` 将已解析的值转发到后台线程
-4. 在仅接受纯字符串的 JSX 属性中使用已解析的值
-
-## 用法
-
-```tsx
-import { useComputedStyle } from "@lynx-js/react-use";
-
-function MonochromeIcon({ src }: { src: string }) {
-  const [ref, { color }] = useComputedStyle(["color"]);
-  return (
-    <view main-thread:ref={ref} className="icon">
-      <svg src={src} current-color={color} />
-    </view>
-  );
-}
+export default defineConfig({
+  plugins: [
+    pluginReactLynx({ engineVersion: "3.5" }),
+    pluginLynxConfig({ enableCSSInlineVariables: true }),
+  ],
+});
 ```
 
-```css
-.icon {
-  color: var(--theme-icon-color);
-}
-```
+## 从 CSS 自定义属性到 SVG `current-color`
 
-## 主题切换示例
+SVG 组件属性本身不能解析 `var(--theme-color)`。完整的桥接过程如下：
 
-```tsx
+1. ReactLynx 在 ref 元素的内联样式中修改 `--theme-color`。
+2. 同一元素通过 CSS 设置 `color: var(--theme-color)`。
+3. 元素更新提交后，`useComputedStyle` 在主线程执行 `element.getComputedStyleProperty("color")`。
+4. 已解析的字符串返回后台线程，并传给 SVG 的 `current-color` 属性。
+5. 未修改的 SVG 内容通过自己的 `fill="currentColor"` 使用该值。
+
+```tsx title="src/App.tsx"
 import { useState } from "@lynx-js/react";
 import { useComputedStyle } from "@lynx-js/react-use";
+import "./App.css";
 
-function ThemedIcon({ src }: { src: string }) {
-  const [dark, setDark] = useState(false);
-  const [ref, { color }] = useComputedStyle(["color"]);
+const ICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z" fill="currentColor"/></svg>`;
+
+const THEMES = [
+  { name: "Blue", color: "#1a73e8" },
+  { name: "Red", color: "#d93025" },
+  { name: "Green", color: "#1e8e3e" },
+  { name: "Orange", color: "#f29900" },
+];
+
+export function App() {
+  const [themeIndex, setThemeIndex] = useState(0);
+  const theme = THEMES[themeIndex];
+  const [ref, styles] = useComputedStyle(["color"], [themeIndex]);
 
   return (
-    <view className={dark ? "theme-dark" : "theme-light"}>
-      <view main-thread:ref={ref} className="icon">
-        <svg src={src} current-color={color} />
+    <view>
+      <view
+        main-thread:ref={ref}
+        className="icon-wrapper"
+        style={{ "--theme-color": theme.color } as Record<string, string>}
+      >
+        <svg
+          className="icon"
+          content={ICON}
+          current-color={styles.color}
+          enable-serval-svg={true}
+        />
       </view>
-      <view bindtap={() => setDark(!dark)}>
-        <text>切换主题</text>
+
+      <text>{`Computed color: ${styles.color ?? "(pending)"}`}</text>
+      <view
+        bindtap={() => setThemeIndex((themeIndex + 1) % THEMES.length)}
+      >
+        <text>切换主题：{theme.name}</text>
       </view>
     </view>
   );
 }
 ```
 
-```css
-.theme-light {
-  --theme-icon-color: #1a1a1a;
+```css title="src/App.css"
+.icon-wrapper {
+  color: var(--theme-color);
+  width: 120rpx;
+  height: 120rpx;
 }
-.theme-dark {
-  --theme-icon-color: #ffffff;
-}
+
 .icon {
-  color: var(--theme-icon-color);
+  width: 120rpx;
+  height: 120rpx;
 }
 ```
 
-## 读取多个属性
+本次验证使用的 Android SVG 组件仅在 Serval 渲染路径中重新渲染 `current-color` 更新，因此示例设置了 `enable-serval-svg={true}`。这不会修改 SVG 内容字符串；可见填充仍然来自 `fill="currentColor"`。
 
-```tsx
-const [ref, styles] = useComputedStyle(["color", "background-color", "opacity"]);
-// styles.color, styles['background-color'], styles.opacity
-```
-
-## 限制
-
-- `keys` 数组在 worklet 闭包创建时被捕获。如果需要更改读取的属性，组件必须重新挂载。
-- 已解析的值是异步传递的（一次主线程 → 后台线程的往返），因此可能存在单帧 `styles` 为空 `{}` 的情况。
-
-## 类型声明
+## API
 
 ```ts
+import type { MainThreadRef } from "@lynx-js/react";
 import type { MainThread } from "@lynx-js/types";
 
 type UseComputedStyleReturn = [
-  ref: (element: MainThread.Element | null) => void,
+  ref: MainThreadRef<MainThread.Element | null>,
   styles: Record<string, string>,
 ];
 
-function useComputedStyle(keys: string[]): UseComputedStyleReturn;
+function useComputedStyle(
+  keys: string[],
+  deps?: unknown[],
+): UseComputedStyleReturn;
 ```
+
+`keys` 是 kebab-case 格式的 CSS 属性名。将所有可能使结果失效的值传入 `deps`；依赖变化后，Hook 会在 ReactLynx 补丁提交后的下一帧重新执行主线程读取。
+
+```tsx
+const [ref, styles] = useComputedStyle(
+  ["color", "background-color", "opacity"],
+  [themeIndex],
+);
+// styles.color, styles["background-color"], styles.opacity
+```
+
+结果是异步返回的，因此 `styles` 初始值为 `{}`。如果重新读取到的键和值均未变化，Hook 会保留原对象，不触发额外渲染。
+
+## 真机验证
+
+以下截图来自真实 Android 设备，设备使用 Lynx SDK 4.1，应用 Bundle 的目标引擎版本为 3.5。每张图显示的值均来自 `getComputedStyleProperty("color")`，播放按钮圆形的填充色则来自传给 SVG `current-color` 的同一个值。整个过程没有使用父元素继承、内联 `color`、背景色替代证明或 SVG 字符串替换。
+
+| 蓝色 — `rgb(26, 115, 232)` | 红色 — `rgb(217, 48, 37)` |
+|---|---|
+| ![蓝色 SVG 填充和计算颜色](../../en/mts/assets/use-computed-style-blue.png) | ![红色 SVG 填充和计算颜色](../../en/mts/assets/use-computed-style-red.png) |
+
+| 绿色 — `rgb(30, 142, 62)` | 橙色 — `rgb(242, 153, 0)` |
+|---|---|
+| ![绿色 SVG 填充和计算颜色](../../en/mts/assets/use-computed-style-green.png) | ![橙色 SVG 填充和计算颜色](../../en/mts/assets/use-computed-style-orange.png) |
