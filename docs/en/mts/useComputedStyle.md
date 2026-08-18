@@ -212,3 +212,17 @@ type UseComputedStyleReturn = [
 
 function useComputedStyle(keys: string[]): UseComputedStyleReturn;
 ```
+
+## Screenshots
+
+Tested on a real Android device via [Lynx Sandbox](https://lynx-sandbox.byted.org). The theme label and chip colors update correctly as `useComputedStyle` reads the resolved CSS variable value from the main thread and exposes it to the React background thread.
+
+| Indigo | Red |
+|---|---|
+| ![Indigo theme](./assets/use-computed-style-indigo.png) | ![Red theme](./assets/use-computed-style-red.png) |
+
+| Green | Orange |
+|---|---|
+| ![Green theme](./assets/use-computed-style-green.png) | ![Orange theme](./assets/use-computed-style-orange.png) |
+
+> Theme label text and selected chip are colored by the value returned from `useComputedStyle(['color'])`, which reads the resolved CSS custom property on the main thread.
