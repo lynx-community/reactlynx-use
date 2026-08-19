@@ -9,7 +9,7 @@ import {
   waitFor,
 } from '@lynx-js/react/testing-library';
 import type { MainThread } from '@lynx-js/types';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import useComputedStyle from '../src/useComputedStyle';
 
 interface ComputedStyleTestElement extends MainThread.Element {
@@ -18,6 +18,9 @@ interface ComputedStyleTestElement extends MainThread.Element {
 
 interface ComputedStyleTestGlobal {
   __useComputedStylePropertyReads?: number;
+  __useComputedStylePrototype?: ComputedStyleTestElement;
+  __useComputedStyleOriginal?: PropertyDescriptor;
+  __useComputedStyleThrows?: boolean;
 }
 
 function installComputedStyleProperty(
@@ -30,21 +33,63 @@ function installComputedStyleProperty(
   }
 
   const prototype = Object.getPrototypeOf(element) as ComputedStyleTestElement;
+  const testGlobal = globalThis as typeof globalThis
+    & ComputedStyleTestGlobal;
+
+  // Remember whatever the environment provides so the stub cannot leak into
+  // any other test that renders a main-thread element.
+  testGlobal.__useComputedStylePrototype = prototype;
+  testGlobal.__useComputedStyleOriginal = Object.getOwnPropertyDescriptor(
+    prototype,
+    'getComputedStyleProperty',
+  );
+
   prototype.getComputedStyleProperty = function getComputedStyleProperty(
     this: MainThread.Element,
     key: string,
   ) {
-    const testGlobal = globalThis as typeof globalThis
-      & ComputedStyleTestGlobal;
     testGlobal.__useComputedStylePropertyReads =
       (testGlobal.__useComputedStylePropertyReads ?? 0) + 1;
+    if (testGlobal.__useComputedStyleThrows) {
+      // Matches what the real reader does below Lynx SDK 3.5.
+      throw new Error('getComputedStyleProperty requires Lynx sdk version 3.5');
+    }
     return String(this.getAttribute(`data-${key}`) ?? '');
   };
 
+  testGlobal.__useComputedStylePropertyReads = 0;
+  testGlobal.__useComputedStyleThrows = false;
+  return true;
+}
+
+function restoreComputedStyleProperty() {
+  'main thread';
   const testGlobal = globalThis as typeof globalThis
     & ComputedStyleTestGlobal;
-  testGlobal.__useComputedStylePropertyReads = 0;
+  const prototype = testGlobal.__useComputedStylePrototype;
+  if (!prototype) {
+    return false;
+  }
+
+  const original = testGlobal.__useComputedStyleOriginal;
+  if (original) {
+    Object.defineProperty(prototype, 'getComputedStyleProperty', original);
+  } else {
+    delete (prototype as Partial<ComputedStyleTestElement>)
+      .getComputedStyleProperty;
+  }
+
+  testGlobal.__useComputedStylePrototype = undefined;
+  testGlobal.__useComputedStyleOriginal = undefined;
+  testGlobal.__useComputedStyleThrows = false;
   return true;
+}
+
+function setComputedStylePropertyThrows(shouldThrow: boolean) {
+  'main thread';
+  const testGlobal = globalThis as typeof globalThis
+    & ComputedStyleTestGlobal;
+  testGlobal.__useComputedStyleThrows = shouldThrow;
 }
 
 function readComputedStylePropertyCount() {
@@ -110,8 +155,13 @@ describe('useComputedStyle', () => {
     expect(installed).toBe(true);
   });
 
+  afterEach(async () => {
+    await runOnMainThread(restoreComputedStyleProperty)();
+    lynxTestingEnv.switchToBackgroundThread();
+  });
+
   it('reads each requested property on the main thread after mount', async () => {
-    let latestStyles: Record<string, string> = {};
+    let latestStyles: Record<string, string | undefined> = {};
 
     function TestComponent() {
       const [ref, styles] = useComputedStyle(['color', 'opacity']);
@@ -137,7 +187,7 @@ describe('useComputedStyle', () => {
   });
 
   it('re-reads after an explicit dependency changes', async () => {
-    let latestStyles: Record<string, string> = {};
+    let latestStyles: Record<string, string | undefined> = {};
 
     function TestComponent({
       color,
@@ -170,8 +220,84 @@ describe('useComputedStyle', () => {
     expect(await getReadCount()).toBe(2);
   });
 
+  it('re-reads when the requested keys change', async () => {
+    let latestStyles: Record<string, string | undefined> = {};
+
+    function TestComponent({ keys }: { keys: string[] }) {
+      const [ref, styles] = useComputedStyle(keys);
+      latestStyles = styles;
+      return (
+        <view
+          main-thread:ref={ref}
+          data-color="rgb(26, 115, 232)"
+          data-opacity="0.8"
+        />
+      );
+    }
+
+    const rendered = render(<TestComponent keys={['color']} />);
+    await waitFor(() => {
+      expect(latestStyles).toEqual({ color: 'rgb(26, 115, 232)' });
+    });
+
+    rendered.rerender(<TestComponent keys={['opacity']} />);
+    await waitFor(() => {
+      expect(latestStyles).toEqual({ opacity: '0.8' });
+    });
+  });
+
+  it('omits a key the engine cannot report instead of reporting an empty value', async () => {
+    let latestStyles: Record<string, string | undefined> = {};
+
+    function TestComponent() {
+      const [ref, styles] = useComputedStyle(['color', 'mask-repeat']);
+      latestStyles = styles;
+      return <view main-thread:ref={ref} data-color="rgb(26, 115, 232)" />;
+    }
+
+    render(<TestComponent />);
+
+    await waitFor(() => {
+      expect(latestStyles.color).toBe('rgb(26, 115, 232)');
+    });
+    await flushThreadWork();
+
+    // `mask-repeat` resolves to an empty string here, the same way the engine
+    // reports a property it has no getter for. The key must stay absent so a
+    // consumer prop keeps its own fallback.
+    expect('mask-repeat' in latestStyles).toBe(false);
+    expect(latestStyles['mask-repeat']).toBeUndefined();
+  });
+
+  it('does not let an unsupported-SDK failure escape the main thread', async () => {
+    const mainThreadConsole = lynxTestingEnv.mainThread.globalThis.console;
+    const warn = vi.spyOn(mainThreadConsole, 'warn').mockImplementation(
+      () => {},
+    );
+    await runOnMainThread(setComputedStylePropertyThrows)(true);
+    lynxTestingEnv.switchToBackgroundThread();
+
+    let latestStyles: Record<string, string | undefined> = {};
+
+    function TestComponent() {
+      const [ref, styles] = useComputedStyle(['color']);
+      latestStyles = styles;
+      return <view main-thread:ref={ref} data-color="rgb(26, 115, 232)" />;
+    }
+
+    render(<TestComponent />);
+    await waitForReadCount(1);
+    await flushThreadWork();
+    await flushThreadWork();
+
+    // Failing open: no value, no throw, and the consumer keeps its fallback.
+    expect(latestStyles).toEqual({});
+    expect(warn).toHaveBeenCalled();
+    warn.mockRestore();
+  });
+
   it('preserves the styles object when a re-read returns unchanged values', async () => {
-    let latestStyles: Record<string, string> = {};
+    let latestStyles: Record<string, string | undefined> = {};
     let renderCount = 0;
 
     function TestComponent({ dependency }: { dependency: number }) {
@@ -204,7 +330,7 @@ describe('useComputedStyle', () => {
   it('keeps the main-thread ref stable and does not enter a render loop', async () => {
     let firstRef: MainThreadRef<MainThread.Element | null> | undefined;
     let latestRef: MainThreadRef<MainThread.Element | null> | undefined;
-    let latestStyles: Record<string, string> = {};
+    let latestStyles: Record<string, string | undefined> = {};
     let renderCount = 0;
 
     function TestComponent() {
