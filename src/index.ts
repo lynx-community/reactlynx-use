@@ -23,6 +23,8 @@ export type {
   StateFromFunctionReturningPromise,
 } from "./useAsyncFn.js";
 export { default as useAsyncFn } from './useAsyncFn.js';
+export type { ComputedStyles, UseComputedStyleReturn } from './useComputedStyle.js';
+export { default as useComputedStyle } from './useComputedStyle.js';
 export { default as useDebounce } from './useDebounce.js';
 export { default as useEventListener } from './useEventListener.js';
 export type { DraftFunction, ImmerHook, Updater } from './useImmer.js';

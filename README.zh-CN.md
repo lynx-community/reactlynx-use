@@ -60,6 +60,7 @@
 </div>
 
 - [**主线程脚本**](./docs/zh/mts/README.md)
+  - [`useComputedStyle`](./docs/zh/mts/useComputedStyle.md) &mdash; 从主线程元素读取已解析的 CSS 值，包括由 CSS 自定义属性生成的值。
   - [`useMainThreadImperativeHandle`](./docs/zh/mts/useMainThreadImperativeHandle.md) &mdash; React [useImperativeHandle](https://react.dev/reference/react/useImperativeHandle) 的主线程版本。
   - [`usePointerEvent`](./docs/usePointerEvent.md) &mdash; 用于将 [`TouchEvent`](https://lynxjs.org/api/lynx-api/event/touch-event.html) 与 [`MouseEvent`](https://lynxjs.org/api/lynx-api/event/mouse-event.html) 统一为 `PointerEvent` 的 hook，便于跨平台处理指针事件。
   - [`useTapLock`](./docs/zh/mts/useTapLock.md) &mdash; 用于锁定点击事件的 hook。
